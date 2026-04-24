@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage })
 
-mongoose.connect('mongodb://localhost:27017/policia')
+mongoose.connect('mongodb+srv://nataliamvemba20_db_user:dxhx5vhijndiq69i@cluster0.roft5py.mongodb.net/policia?appname=cluster0')
     .then(() => console.log('MongoDB conectado'))
     .catch(e => console.log('MongoDB erro:', e.message))
 
