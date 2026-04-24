@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema Biométrico</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    background: #f0f2f5;
+}
+
+/* ── Sidebar ── */
+nav.sidebar {
+    width: 68px;
+    height: 100vh;
+    background: #0A0F1C;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    gap: 4px;
+    transition: width 0.22s ease;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+}
+nav.sidebar:hover { width: 220px; }
+
+.sidebar-logo {
+    width: 36px;
+    height: 36px;
+    background: #1E3A5F;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
+.sidebar-logo i { color: #7eb4f7; font-size: 18px; }
+
+.nav-item {
+    width: calc(100% - 16px);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #8899bb;
+    font-size: 14px;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+}
+.nav-item:hover, .nav-item.active {
+    background: #1E3A5F;
+    color: #fff;
+}
+.nav-item i { font-size: 20px; flex-shrink: 0; width: 22px; text-align: center; }
+.nav-label {
+    opacity: 0;
+    transition: opacity 0.12s 0.06s;
+    white-space: nowrap;
+}
+nav.sidebar:hover .nav-label { opacity: 1; }
+
+.nav-spacer { flex: 1; }
+
+/* ── Main area ── */
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.topbar {
+    height: 54px;
+    background: #fff;
+    border-bottom: 1px solid #e4e7ec;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    flex-shrink: 0;
+}
+.topbar-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0A0F1C;
+}
+.topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #555;
+}
+.avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #1E3A5F;
+    color: #7eb4f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* ── Content panels ── */
+.content { flex: 1; overflow-y: auto; padding: 24px; }
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+.page-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #0A0F1C;
+    margin-bottom: 20px;
+}
+
+/* Stats */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+}
+.stat-card {
+    background: #fff;
+    border: 1px solid #e4e7ec;
+    border-radius: 12px;
+    padding: 16px 18px;
+}
+.stat-label { font-size: 12px; color: #888; margin-bottom: 4px; }
+.stat-value { font-size: 28px; font-weight: 600; color: #0A0F1C; }
+.stat-sub { font-size: 11px; color: #aaa; margin-top: 2px; }
+
+/* Activity list */
+.section-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+}
+.activity-list { display: flex; flex-direction: column; gap: 8px; }
+.activity-item {
+    background: #fff;
+    border: 1px solid #e4e7ec;
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #333;
+}
+.activity-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dot-green { background: #22c55e; }
+.dot-red { background: #ef4444; }
+.dot-amber { background: #f59e0b; }
+.activity-time { margin-left: auto; font-size: 11px; color: #aaa; }
+
+.badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    margin-left: 6px;
+}
+.badge-green { background: #dcfce7; color: #166534; }
+.badge-red { background: #fee2e2; color: #991b1b; }
+
+/* ── Tabela ocorrências ── */
+.tabela-wrap {
+    overflow-x: auto;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e4e7ec;
+}
+.tabela-wrap table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+.tabela-wrap thead {
+    background: #0A0F1C;
+    color: #fff;
+}
+.tabela-wrap thead th {
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 600;
+}
+.tabela-wrap tbody tr {
+    border-bottom: 1px solid #e4e7ec;
+    transition: background 0.1s;
+}
+.tabela-wrap tbody tr:hover { background: #f7f9fc; }
+.tabela-wrap tbody td {
+    padding: 11px 14px;
+    color: #333;
+}
+.tabela-wrap tbody tr:last-child { border-bottom: none; }
+
+.btn-refresh {
+    margin-bottom: 14px;
+    padding: 8px 16px;
+    background: #1E3A5F;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.btn-refresh:hover { background: #2a5080; }
+
+.status-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+.status-disparo   { background: #fee2e2; color: #991b1b; }
+.status-sos       { background: #fef3c7; color: #92400e; }
+.status-negado    { background: #fee2e2; color: #991b1b; }
+.status-ok        { background: #dcfce7; color: #166534; }
+.status-default   { background: #e0e7ff; color: #3730a3; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+        <i class="bi bi-shield-fill"></i>
+    </div>
+
+    <a class="nav-item active" onclick="showPanel('inicio', this)">
+        <i class="bi bi-house-fill"></i>
+        <span class="nav-label">Início</span>
+    </a>
+
+    <a class="nav-item" href="banco de dados.html">
+        <i class="bi bi-database-fill"></i>
+        <span class="nav-label">Banco de dados</span>
+    </a>
+
+    <a class="nav-item" onclick="showPanel('ocorrencias', this)">
+        <i class="bi bi-geo-alt-fill"></i>
+        <span class="nav-label">Ocorrências</span>
+    </a>
+
+    <a class="nav-item" onclick="showPanel('conta', this)">
+        <i class="bi bi-person-fill"></i>
+        <span class="nav-label">Conta</span>
+    </a>
+
+    <div class="nav-spacer"></div>
+
+    <a class="nav-item" onclick="logout()">
+        <i class="bi bi-box-arrow-right"></i>
+        <span class="nav-label">Terminar sessão</span>
+    </a>
+</nav>
+
+<!-- Main -->
+<div class="main">
+    <div class="topbar">
+        <span class="topbar-title">Sistema Biométrico — Polícia Nacional</span>
+        <div class="topbar-user">
+            <div class="avatar" id="avatar-initials">AD</div>
+            <span id="topbar-username">admin</span>
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Início -->
+        <div class="panel active" id="panel-inicio">
+            <div class="page-title">Início</div>
+
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-label">Agentes registados</div>
+                    <div class="stat-value" id="stat-agentes">—</div>
+                    <div class="stat-sub">Total na base</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Crimes registados</div>
+                    <div class="stat-value" id="stat-crimes">—</div>
+                    <div class="stat-sub">Total na base</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Ocorrências</div>
+                    <div class="stat-value" id="stat-ocorrencias">—</div>
+                    <div class="stat-sub">Total registadas</div>
+                </div>
+            </div>
+
+            <div class="section-label">Últimas ocorrências</div>
+            <div class="activity-list" id="activity-list">
+                <div class="activity-item" style="color:#aaa;">A carregar...</div>
+            </div>
+        </div>
+
+        <!-- Ocorrências -->
+        <div class="panel" id="panel-ocorrencias">
+            <div class="page-title">Ocorrências</div>
+
+            <button class="btn-refresh" onclick="carregarOcorrencias()">
+                <i class="bi bi-arrow-clockwise"></i> Actualizar
+            </button>
+
+            <div class="tabela-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Agente</th>
+                            <th>Data</th>
+                            <th>Hora</th>
+                            <th>Tiros</th>
+                            <th>Status</th>
+                            <th>Coordenadas</th>
+                            <th>Mapa</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-ocorrencias">
+                        <tr>
+                            <td colspan="8" style="padding:20px;text-align:center;color:#aaa;">
+                                A carregar...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Conta -->
+        <div class="panel" id="panel-conta">
+            <div class="page-title">Conta</div>
+            <p style="color:#888; font-size:14px;">Utilizador: <strong id="conta-username"></strong></p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const API = 'https://pamperer-unroasted-handrail.ngrok-free.dev'
+
+// ── Verificação de login ──
+const usuario = sessionStorage.getItem('usuario')
+const perfil  = sessionStorage.getItem('perfil')
+
+if (!usuario) {
+    window.location.href = 'login.html'
+}
+
+document.getElementById('topbar-username').textContent = usuario || 'admin'
+document.getElementById('conta-username').textContent  = usuario || 'admin'
+
+const initials = (usuario || 'AD').slice(0, 2).toUpperCase()
+document.getElementById('avatar-initials').textContent = initials
+
+// ── Navegação ──
+function showPanel(id, el) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'))
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
+    document.getElementById('panel-' + id).classList.add('active')
+    if (el) el.classList.add('active')
+    if (id === 'ocorrencias') carregarOcorrencias()
+}
+
+// ── Logout ──
+function logout() {
+    sessionStorage.clear()
+    window.location.href = 'login.html'
+}
+
+// ── Cor do status ──
+function statusClass(s) {
+    if (!s) return 'status-default'
+    const u = s.toUpperCase()
+    if (u.includes('DISPARO'))  return 'status-disparo'
+    if (u.includes('SOS'))      return 'status-sos'
+    if (u.includes('NEGADO'))   return 'status-negado'
+    if (u.includes('LIBERA') || u.includes('PERIODICA')) return 'status-ok'
+    return 'status-default'
+}
+
+// ── Carrega tabela de ocorrências ──
+async function carregarOcorrencias() {
+    const tbody = document.getElementById('tbody-ocorrencias')
+    tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;text-align:center;color:#aaa;">A carregar...</td></tr>'
+    try {
+        const dados = await fetch(API + '/ocorrencias').then(r => r.json())
+
+        if (!dados.length) {
+            tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;text-align:center;color:#aaa;">Sem ocorrências registadas.</td></tr>'
+            return
+        }
+
+        tbody.innerHTML = dados.map(o => `
+            <tr>
+                <td>${o.id || '—'}</td>
+                <td>${o.idAgente || '—'}</td>
+                <td>${o.data || '—'}</td>
+                <td>${o.hora || '—'}</td>
+                <td>${o.vezes ?? '—'}</td>
+                <td><span class="status-badge ${statusClass(o.status)}">${o.status || '—'}</span></td>
+                <td>${o.latitude || '—'}, ${o.longitude || '—'}</td>
+                <td>${o.latitude ? `<a href="http://maps.google.com/?q=${o.latitude},${o.longitude}" target="_blank"><i class="bi bi-geo-alt"></i> Ver</a>` : '—'}</td>
+            </tr>`).join('')
+
+    } catch(e) {
+        tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;text-align:center;color:#f55;">Servidor inacessível.</td></tr>'
+    }
+}
+
+// ── Carrega estatísticas e actividade ──
+async function carregarStats() {
+    try {
+        const [agentes, crimes, ocorrencias] = await Promise.all([
+            fetch(API + '/policia').then(r => r.json()),
+            fetch(API + '/crimes').then(r => r.json()),
+            fetch(API + '/ocorrencias').then(r => r.json())
+        ])
+
+        document.getElementById('stat-agentes').textContent     = agentes.length
+        document.getElementById('stat-crimes').textContent      = crimes.length
+        document.getElementById('stat-ocorrencias').textContent = ocorrencias.length
+
+        const lista = document.getElementById('activity-list')
+        if (!ocorrencias.length) {
+            lista.innerHTML = '<div class="activity-item" style="color:#aaa;">Sem ocorrências registadas.</div>'
+            return
+        }
+
+        lista.innerHTML = ocorrencias.slice(0, 6).map(o => {
+            const cor = (o.status || '').toUpperCase().includes('LIBERA') ? 'green' : 'red'
+            const badge = cor === 'green'
+                ? '<span class="badge badge-green">' + (o.status || '') + '</span>'
+                : '<span class="badge badge-red">'   + (o.status || '') + '</span>'
+            return `
+                <div class="activity-item">
+                    <div class="activity-dot dot-${cor}"></div>
+                    <span>Agente <strong>${o.idAgente || '—'}</strong> ${badge}</span>
+                    <span class="activity-time">${o.hora || o.data || ''}</span>
+                </div>`
+        }).join('')
+
+    } catch(e) {
+        document.getElementById('activity-list').innerHTML =
+            '<div class="activity-item" style="color:#f55;">Servidor offline ou inacessível.</div>'
+    }
+}
+
+carregarStats()
+</script>
+</body>
+</html>

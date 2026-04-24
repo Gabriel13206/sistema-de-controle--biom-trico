@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #1E3A5F;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card {
+            background: #ffffffde;
+            border-radius: 15px;
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo h2 {
+            color: #335;
+            font-size: 22px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        .logo p {
+            color: #66baff;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        .escudo {
+            font-size: 50px;
+        }
+        input {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: border 0.3s;
+        }
+        input:focus { border-color: #335; }
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 15px;
+            background: #0F1C2E;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        button:hover { opacity: 0.9; }
+        .erro {
+            color: #ff1313;
+            text-align: center;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+        }
+        .label {
+            font-size: 13px;
+            color: #555;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo">
+            <div class="escudo"></div>
+            <h2>SISTEMA BIOMETRICO</h2>
+            <p>Controlo de Acesso — Policia Nacional</p>
+        </div>
+        <p class="label">Utilizador</p>
+        <input type="text" id="usuario" placeholder="Digite o utilizador">
+        <p class="label">Senha</p>
+        <input type="password" id="senha" placeholder="Digite a senha">
+        <button onclick="entrar()">ENTRAR</button>
+        <p class="erro" id="erro">Utilizador ou senha incorrectos</p>
+    </div>
+
+    <script>
+        // =====================================================
+        // ALTERAR APENAS AQUI QUANDO O LINK DO NGROK MUDAR
+        const BASE_URL = "https://pamperer-unroasted-handrail.ngrok-free.dev";
+        // =====================================================
+
+        async function entrar() {
+            let usuario = document.getElementById('usuario').value.trim()
+            let senha = document.getElementById('senha').value.trim()
+
+            if (!usuario || !senha) {
+                document.getElementById('erro').style.display = 'block'
+                document.getElementById('erro').textContent = 'Preencha todos os campos'
+                return
+            }
+
+            try {
+                let res = await fetch(BASE_URL + '/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+                    body: JSON.stringify({ usuario, senha })
+                })
+                let data = await res.json()
+
+                if (res.ok) {
+                    sessionStorage.setItem('usuario', data.usuario)
+                    sessionStorage.setItem('perfil', data.perfil)
+                    window.location.href = 'sistema.html'
+                } else {
+                    document.getElementById('erro').style.display = 'block'
+                    document.getElementById('erro').textContent = data.erro
+                }
+            } catch(e) {
+                document.getElementById('erro').style.display = 'block'
+                document.getElementById('erro').textContent = 'Servidor offline'
+            }
+        }
+
+        document.addEventListener('keypress', e => {
+            if (e.key === 'Enter') entrar()
+        })
+    </script>
+</body>
+</html>
