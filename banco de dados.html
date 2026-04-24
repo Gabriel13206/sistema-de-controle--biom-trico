@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Biometrico</title>
+    <style>
+        body { font-family: Arial, Helvetica, sans-serif; margin: 0; }
+        a { text-decoration: none; }
+        header { background-color: #335; padding: 10px; display: flex; align-items: center; gap: 15px; }
+        .btn-abrir { color: #fff; font-size: 25px; }
+        #search { padding: 6px; border-radius: 5px; border: none; outline: none; }
+        .user-info { margin-left: auto; color: #fff; font-size: 13px; display: flex; align-items: center; gap: 10px; }
+        .btn-logout { padding: 6px 14px; background: #c0392b; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 13px; }
+        nav { height: 100%; width: 0px; background-color: #335; position: fixed; top: 0; left: 0; z-index: 1; overflow: hidden; transition: width 0.3s; }
+        nav a { color: #fff; font-size: 15px; display: block; padding: 12px 10px 20px 32px; }
+        nav a:hover { background-color: #ffffff99; }
+        main { padding: 10px; transition: margin-left 0.5s; }
+        .table-container { width: 100%; overflow-x: auto; }
+        table { border-collapse: collapse; width: 100%; min-width: 600px; border: 1px solid #335; box-shadow: 2px 2px 12px rgba(0,0,0,0.2); }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; font-size: 12px; }
+        #header { background-color: #335; color: #fff; }
+        h1 { font-weight: 600; text-align: center; color: #335; padding: 10px 0px; }
+        .botao { background-color: #335; color: #fff; border: none; cursor: pointer; }
+        .botao:hover { transform: scale(1.2); }
+        .act { font-size: 20px; color: #fff; transition: 0.3s; }
+        .act:hover { transform: scale(1.2); }
+        tr:hover { background-color: #f5f5f5; }
+        .tabela { display: none; }
+        .tabela.active { display: block; }
+        @media only screen and (max-width:768px) { table { width: 100%; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="#" class="btn-abrir" onclick="abrirMenu()">&#9776;</a>
+    <input type="text" id="search" placeholder="Pesquisar ID, Nome ou Data..." onkeyup="pesquisar()">
+    <div class="user-info">
+        <span id="nomeUtilizador"></span>
+        <button class="btn-logout" onclick="logout()">SAIR</button>
+    </div>
+</header>
+
+<nav id="menu">
+    <a href="#" onclick="fecharMenu()">&#9776;</a>
+    <a href="#" onclick="mostrar('agentes');return false">AGENTES</a>
+    <a href="#" onclick="mostrar('crimes');return false">CRIMES</a>
+    <a href="#" onclick="mostrar('nacionais');return false">NACIONAIS</a>
+    <a href="#" onclick="mostrar('ocorrencias');return false">OCORRENCIAS</a>
+</nav>
+
+<main id="conteudo">
+
+    <!-- AGENTES -->
+    <div id="agentes" class="tabela active">
+        <h1>AGENTES</h1>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr id="header">
+                        <th>ID</th>
+                        <th>TIPO</th>
+                        <th>NOME</th>
+                        <th>PATENTE</th>
+                        <th>GENERO</th>
+                        <th>PROVINCIA</th>
+                        <th>MUNICIPIO</th>
+                        <th>ESQUADRA</th>
+                        <th>ARMA</th>
+                        <th>EMISSAO</th>
+                        <th>RENOVACAO</th>
+                        <th>FOTO</th>
+                        <th>STATUS</th>
+                        <th>
+                            <button onclick="adicionar()" class="botao">ADICIONAR</button>
+                            <a href="#" onclick="actualisar()" class="act">&#8635;</a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="linhas"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- CRIMES -->
+    <div id="crimes" class="tabela">
+        <h1>CRIMES</h1>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr id="header">
+                        <th>ID</th>
+                        <th>NOME</th>
+                        <th>GENERO</th>
+                        <th>DATA DETENCAO</th>
+                        <th>DATA SAIDA</th>
+                        <th>PROVINCIA</th>
+                        <th>ALTURA</th>
+                        <th>STATUS</th>
+                        <th>FOTO</th>
+                        <th>
+                            <button onclick="adicionarCrime()" class="botao">ADICIONAR</button>
+                            <a href="#" onclick="actualizarCrimes()" class="act">&#8635;</a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="linhasCrimes"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- NACIONAIS -->
+    <div id="nacionais" class="tabela">
+        <h1>NACIONAIS</h1>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr id="header">
+                        <th>ID</th>
+                        <th>NOME</th>
+                        <th>IDADE</th>
+                        <th>ALTURA</th>
+                        <th>DATA</th>
+                        <th>MORADA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>Maria</td><td>22</td><td>Luanda</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- OCORRENCIAS -->
+    <div id="ocorrencias" class="tabela">
+        <h1>OCORRENCIAS</h1>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr id="header">
+                        <th>ID</th>
+                        <th>ID AGENTE</th>
+                        <th>GPS</th>
+                        <th>DATA</th>
+                        <th>HORA</th>
+                        <th>VEZES</th>
+                        <th>STATUS</th>
+                        <th>
+                            <a href="#" onclick="actualizarOcorrencias()" class="act">&#8635;</a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="linhasOcorrencias"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODAL AGENTES -->
+    <div id="modalAgentes" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999;">
+        <div style="background:#fff; width:90%; max-width:450px; border-radius:15px; box-shadow:0 20px 40px rgba(0,0,0,0.4); padding:30px; max-height:90vh; overflow-y:auto; display:flex; flex-direction:column; margin:auto; margin-top:5vh;">
+            <h3 style="margin:0 0 20px 0; color:#335; font-size:24px; text-align:center;">Novo Agente</h3>
+            <div style="width:100%; margin-bottom:25px;">
+                <input id="inputID" placeholder="ID (ex: 001)" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                <input id="inputNome" placeholder="Nome completo (minimo 3 nomes)" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                <select id="inputTipo" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                    <option value="">Selecionar tipo</option>
+                    <option value="Policia">Policia</option>
+                    <option value="Investigador">Investigador</option>
+                    <option value="Agente">Agente</option>
+                </select>
+                <input id="inputPatente" placeholder="Patente (ex: Sargento)" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                <select id="inputGenero" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                    <option value="">Selecionar genero</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Feminino">Feminino</option>
+                </select>
+                <select id="inputProvincia" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                    <option value="">Selecionar provincia</option>
+                    <option value="Luanda">Luanda</option>
+                    <option value="Benguela">Benguela</option>
+                    <option value="Huila">Huila</option>
+                    <option value="Cabinda">Cabinda</option>
+                    <option value="Malanje">Malanje</option>
+                    <option value="Huambo">Huambo</option>
+                    <option value="Bie">Bie</option>
+                    <option value="Moxico">Moxico</option>
+                    <option value="Cuando Cubango">Cuando Cubango</option>
+                    <option value="Cunene">Cunene</option>
+                    <option value="Namibe">Namibe</option>
+                    <option value="Zaire">Zaire</option>
+                    <option value="Uige">Uige</option>
+                    <option value="Kwanza Norte">Kwanza Norte</option>
+                    <option value="Kwanza Sul">Kwanza Sul</option>
+                    <option value="Lunda Norte">Lunda Norte</option>
+                    <option value="Lunda Sul">Lunda Sul</option>
+                    <option value="Bengo">Bengo</option>
+                </select>
+                <input id="inputMunicipio" placeholder="Municipio" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                <input id="inputEsquadra" placeholder="Esquadra / Delegacia" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                <select id="inputArma" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                    <option value="">Selecionar tipo de arma</option>
+                    <option value="Pistola">Pistola</option>
+                    <option value="Espingarda">Espingarda</option>
+                    <option value="Submetralhadora">Submetralhadora</option>
+                    <option value="Rifle">Rifle</option>
+                    <option value="Arma Biometrica">Arma Biometrica</option>
+                </select>
+                <input id="inputDataE" type="date" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                <input id="inputDataR" type="date" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                <input id="inputFoto" type="file" accept="image/*" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+            </div>
+            <div style="display:flex; gap:15px; justify-content:flex-end; width:100%;">
+                <button onclick="fecharModal()" style="flex:1; padding:15px 25px; border:none; border-radius:10px; background:#f0f0f0; color:#666; font-size:16px; font-weight:600; cursor:pointer;">Cancelar</button>
+                <button id="btnSalvar" onclick="salvarNovo()" style="flex:1; padding:15px 25px; border:none; border-radius:10px; background:#335; color:white; font-size:16px; font-weight:600; cursor:pointer;">Adicionar Agente</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CRIMES -->
+    <div id="modalCrimes" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999;">
+        <div style="background:#fff; width:90%; max-width:450px; border-radius:15px; box-shadow:0 20px 40px rgba(0,0,0,0.4); padding:30px; max-height:90vh; overflow-y:auto; display:flex; flex-direction:column; margin:auto; margin-top:5vh;">
+            <h3 style="margin:0 0 20px 0; color:#335; font-size:24px; text-align:center;">Novo Crime</h3>
+            <div style="width:100%; margin-bottom:25px;">
+                <input id="crimeID" placeholder="ID (ex: 001)" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                <input id="crimeNome" placeholder="Nome completo (minimo 3 nomes)" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                <select id="crimeGenero" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                    <option value="">Selecionar genero</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Feminino">Feminino</option>
+                </select>
+                <input id="crimeDetencao" type="date" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                <input id="crimeSaida" type="date" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                <select id="crimeProvincia" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                    <option value="">Selecionar provincia</option>
+                    <option value="Luanda">Luanda</option>
+                    <option value="Benguela">Benguela</option>
+                    <option value="Huila">Huila</option>
+                    <option value="Cabinda">Cabinda</option>
+                    <option value="Malanje">Malanje</option>
+                    <option value="Huambo">Huambo</option>
+                    <option value="Bie">Bie</option>
+                    <option value="Moxico">Moxico</option>
+                    <option value="Cuando Cubango">Cuando Cubango</option>
+                    <option value="Cunene">Cunene</option>
+                    <option value="Namibe">Namibe</option>
+                    <option value="Zaire">Zaire</option>
+                    <option value="Uige">Uige</option>
+                    <option value="Kwanza Norte">Kwanza Norte</option>
+                    <option value="Kwanza Sul">Kwanza Sul</option>
+                    <option value="Lunda Norte">Lunda Norte</option>
+                    <option value="Lunda Sul">Lunda Sul</option>
+                    <option value="Bengo">Bengo</option>
+                </select>
+                <select id="crimeAltura" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                    <option value="">Selecionar altura</option>
+                    <option value="1.40">1.40 m</option>
+                    <option value="1.45">1.45 m</option>
+                    <option value="1.50">1.50 m</option>
+                    <option value="1.55">1.55 m</option>
+                    <option value="1.60">1.60 m</option>
+                    <option value="1.65">1.65 m</option>
+                    <option value="1.70">1.70 m</option>
+                    <option value="1.75">1.75 m</option>
+                    <option value="1.80">1.80 m</option>
+                    <option value="1.85">1.85 m</option>
+                    <option value="1.90">1.90 m</option>
+                    <option value="1.95">1.95 m</option>
+                    <option value="2.00">2.00 m</option>
+                </select>
+                <select id="crimeStatus" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+                    <option value="">Selecionar estado</option>
+                    <option value="Detido">DETIDO</option>
+                    <option value="Solto">SOLTO</option>
+                </select>
+                <input id="crimeFoto" type="file" accept="image/*" style="width:100%; padding:15px; margin:10px 0; border:2px solid #ddd; border-radius:8px; box-sizing:border-box; font-size:16px;">
+            </div>
+            <div style="display:flex; gap:15px; justify-content:flex-end; width:100%;">
+                <button onclick="fecharModalCrime()" style="flex:1; padding:15px 25px; border:none; border-radius:10px; background:#f0f0f0; color:#666; font-size:16px; font-weight:600; cursor:pointer;">Cancelar</button>
+                <button id="btnSalvarCrime" onclick="salvarCrime()" style="flex:1; padding:15px 25px; border:none; border-radius:10px; background:#335; color:white; font-size:16px; font-weight:600; cursor:pointer;">Adicionar Crime</button>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    let isUpdating = false;
+
+    if (!sessionStorage.getItem('usuario')) {
+        window.location.href = 'login.html';
+    } else {
+        document.getElementById('nomeUtilizador').textContent = sessionStorage.getItem('usuario').toUpperCase();
+    }
+
+    function logout() {
+        sessionStorage.clear();
+        window.location.href = 'login.html';
+    }
+
+    function abrirMenu() {
+        document.getElementById('menu').style.width = '220px';
+        document.getElementById('conteudo').style.marginLeft = '220px';
+    }
+
+    function fecharMenu() {
+        document.getElementById('menu').style.width = '0px';
+        document.getElementById('conteudo').style.marginLeft = '0px';
+    }
+
+    function mostrar(id) {
+        document.querySelectorAll('.tabela').forEach(t => t.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        fecharMenu();
+    }
+
+    function pesquisar() {
+        let termo = document.getElementById('search').value.toLowerCase();
+        let linhas = document.querySelectorAll('.tabela.active tbody tr');
+        linhas.forEach(tr => {
+            let texto = tr.textContent.toLowerCase();
+            tr.style.display = texto.includes(termo) ? '' : 'none';
+        });
+    }
+
+    async function actualisar() {
+        if (isUpdating) return;
+        isUpdating = true;
+        try {
+            let res = await fetch("https://pamperer-unroasted-handrail.ngrok-free.dev/policia");
+            if (!res.ok) throw new Error("Erro: " + res.status);
+            let dados = await res.json();
+            let html = "";
+            if (dados.length === 0) {
+                html = '<tr><td colspan="14" style="text-align:center; padding:20px;">Nenhum agente registado.</td></tr>';
+            }
+            for (let p of dados) {
+                let fotoHtml = p.foto
+                    ? `<img src="https://pamperer-unroasted-handrail.ngrok-free.dev/uploads/${p.foto}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">`
+                    : 'Sem foto';
+                let statusCor = p.status === 'bloqueado' ? '#e74c3c' : '#27ae60';
+                let statusTexto = p.status === 'bloqueado' ? 'BLOQUEADO' : 'ACTIVO';
+                let btnTexto = p.status === 'bloqueado' ? 'DESBLOQUEAR' : 'BLOQUEAR';
+                let btnCor = p.status === 'bloqueado' ? '#27ae60' : '#e67e22';
+                html += `
+                    <tr>
+                        <td>${p.id ?? 'N/A'}</td>
+                        <td>${p.tipo ?? 'N/A'}</td>
+                        <td>${p.nome ?? 'N/A'}</td>
+                        <td>${p.patente ?? 'N/A'}</td>
+                        <td>${p.genero ?? 'N/A'}</td>
+                        <td>${p.provincia ?? 'N/A'}</td>
+                        <td>${p.municipio ?? 'N/A'}</td>
+                        <td>${p.esquadra ?? 'N/A'}</td>
+                        <td>${p.arma ?? 'N/A'}</td>
+                        <td>${p.dataEmissao ?? 'N/A'}</td>
+                        <td>${p.dataRenovacao ?? 'N/A'}</td>
+                        <td>${fotoHtml}</td>
+                        <td style="color:${statusCor}; font-weight:bold;">${statusTexto}</td>
+                        <td style="white-space:nowrap;">
+                            <button onclick="editar('${p._id}')" style="padding:5px 10px; margin:2px; background:#335; color:white; border:none; border-radius:4px; cursor:pointer;">editar</button>
+                            <button onclick="toggleStatus('${p._id}')" style="padding:5px 10px; margin:2px; background:${btnCor}; color:white; border:none; border-radius:4px; cursor:pointer;">${btnTexto}</button>
+                            <button onclick="deletar('${p._id}')" style="padding:5px 10px; margin:2px; background:#e74c3c; color:white; border:none; border-radius:4px; cursor:pointer;">apagar</button>
+                        </td>
+                    </tr>
+                `;
+            }
+            document.getElementById("linhas").innerHTML = html;
+        } catch (e) {
+            console.error("Erro:", e);
+            document.getElementById("linhas").innerHTML =
+                '<tr><td colspan="14" style="text-align:center; padding:20px; color:#e74c3c;">Erro de conexao. Verifique o servidor.</td></tr>';
+        } finally {
+            setTimeout(() => isUpdating = false, 500);
+        }
+    }
+
+    function adicionar() {
+        document.getElementById('modalAgentes').style.display = 'flex';
+    }
+
+    function fecharModal() {
+        document.getElementById('modalAgentes').style.display = 'none';
+    }
+
+    async function toggleStatus(id) {
+        try {
+            let res = await fetch("https://pamperer-unroasted-handrail.ngrok-free.dev/policia/" + id + "/status", { method: "PATCH" });
+            if (res.ok) {
+                let data = await res.json();
+                alert("Agente " + data.status.toUpperCase() + "!");
+                setTimeout(actualisar, 300);
+            } else {
+                alert("Erro ao alterar status");
+            }
+        } catch(e) {
+            alert("Servidor offline!");
+        }
+    }
+
+    async function salvarNovo() {
+        let id = document.getElementById('inputID').value.trim();
+        let nome = document.getElementById('inputNome').value.trim();
+        let tipo = document.getElementById('inputTipo').value;
+        let patente = document.getElementById('inputPatente').value.trim();
+        let genero = document.getElementById('inputGenero').value;
+        let provincia = document.getElementById('inputProvincia').value;
+        let municipio = document.getElementById('inputMunicipio').value.trim();
+        let esquadra = document.getElementById('inputEsquadra').value.trim();
+        let arma = document.getElementById('inputArma').value;
+        let dataEmissao = document.getElementById('inputDataE').value;
+        let dataRenovacao = document.getElementById('inputDataR').value;
+        let fotoInput = document.getElementById('inputFoto');
+
+        let partesNome = nome.split(' ').filter(p => p.length > 0);
+
+        if (!id) { alert("ID vazio!"); return; }
+        if (partesNome.length < 3) { alert("Nome deve ter minimo 3 nomes!"); return; }
+        if (!tipo) { alert("TIPO nao seleccionado!"); return; }
+        if (!patente) { alert("PATENTE vazia!"); return; }
+        if (!genero) { alert("GENERO nao seleccionado!"); return; }
+        if (!provincia) { alert("PROVINCIA nao seleccionada!"); return; }
+        if (!municipio) { alert("MUNICIPIO vazio!"); return; }
+        if (!esquadra) { alert("ESQUADRA vazia!"); return; }
+        if (!arma) { alert("ARMA nao seleccionada!"); return; }
+        if (!dataEmissao) { alert("DATA EMISSAO nao preenchida!"); return; }
+        if (!dataRenovacao) { alert("DATA RENOVACAO nao preenchida!"); return; }
+
+        let btn = document.getElementById('btnSalvar');
+        btn.textContent = "A guardar...";
+        btn.disabled = true;
+
+        try {
+            let nomeFoto = '';
+            if (fotoInput.files[0]) {
+                let formData = new FormData();
+                formData.append('foto', fotoInput.files[0]);
+                let uploadRes = await fetch("https://pamperer-unroasted-handrail.ngrok-free.dev/upload", { method: "POST", body: formData });
+                let uploadData = await uploadRes.json();
+                nomeFoto = uploadData.ficheiro;
+            }
+            let res = await fetch("https://pamperer-unroasted-handrail.ngrok-free.dev/policia", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id, nome, tipo, patente, genero, provincia, municipio, esquadra, arma, dataEmissao, dataRenovacao, foto: nomeFoto })
+            });
+            if (res.ok) {
+                alert("Agente adicionado!");
+                fecharModal();
+                document.querySelectorAll('#modalAgentes input').forEach(i => i.value = '');
+                document.querySelectorAll('#modalAgentes select').forEach(s => s.value = '');
+                setTimeout(actualisar, 300);
+            } else {
+                let erro = await res.json();
+                alert("Erro: " + erro.erro);
+            }
+        } catch (e) {
+            alert("Servidor offline!");
+        }
+
+        btn.textContent = "Adicionar Agente";
+        btn.disabled = false;
+    }
+
+    async function editar(id) {
+        let nome = prompt("Novo nome:");
+        let patente = prompt("Nova patente:");
+        let tipo = prompt("Tipo:");
+        let genero = prompt("Genero:");
+        let provincia = prompt("Provincia:");
+        let municipio = prompt("Municipio:");
+        let esquadra = prompt("Esquadra:");
+        let arma = prompt("Arma:");
+        let dataEmissao = prompt("Data emissao (YYYY-MM-DD):");
+        let dataRenovacao = prompt("Data renovacao (YYYY-MM-DD):");
+
+        if (!nome || !patente || !tipo || !genero || !provincia || !municipio || !esquadra || !arma || !dataEmissao || !dataRenovacao) {
+            alert("Preencha TODOS os campos!");
+            return;
+        }
+        try {
+            let res = await fetch("https://pamperer-unroasted-handrail.ngrok-free.dev/policia/" + id, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nome, patente, tipo, genero, provincia, municipio, esquadra, arma, dataEmissao, dataRenovacao })
+            });
+            if (res.ok) { setTimeout(actualisar, 300); alert("Atualizado!"); }
+            else { alert("Erro ao atualizar"); }
+        } catch (e) { alert("Erro: " + e.message); }
+    }
+
+    async function deletar(id) {
+        if (confirm("Confirmar exclusao do agente?")) {
+            try {
+                let res = await fetch("https://pamperer-unroasted-handrail.ngrok-free.dev/policia/" + id, { method: "DELETE" });
+                if (res.ok) { setTimeout(actualisar, 300); alert("Excluido!"); }
+            } catch (e) { alert("Erro ao excluir"); }
+        }
+    }
+
+    function adicionarCrime() {
+        document.getElementById('modalCrimes').style.display = 'flex';
+    }
+
+    function fecharModalCrime() {
+        document.getElementById('modalCrimes').style.display = 'none';
+    }
+
+    async function actualizarCrimes() {
+        try {
+            let res = await fetch("https://pamperer-unroasted-handrail.ngrok-free.dev/crimes");
+            if (!res.ok) throw new Error("Erro: " + res.status);
+            let dados = await res.json();
+            let html = "";
+            if (dados.length === 0) {
+                html = '<tr><td colspan="10" style="text-align:center; padding:20px;">Nenhum crime registado.</td></tr>';
+            }
+            for (let c of dados) {
+                let fotoHtml = c.foto
+                    ? `<img src="https://pamperer-unroasted-handrail.ngrok-free.dev/uploads/${c.foto}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">`
+                    : 'Sem foto';
+                html += `
+                    <tr>
+                        <td>${c.id ?? 'N/A'}</td>
+                        <td>${c.nome ?? 'N/A'}</td>
+                        <td>${c.genero ?? 'N/A'}</td>
+                        <td>${c.dataDetencao ?? 'N/A'}</td>
+                        <td>${c.dataSaida ?? 'N/A'}</td>
+                        <td>${c.provincia ?? 'N/A'}</td>
+                        <td>${c.altura ?? 'N/A'}</td>
+                        <td>${c.status ?? 'N/A'}</td>
+                        <td>${fotoHtml}</td>
+                        <td style="white-space:nowrap;">
+                            <button onclick="editarCrime('${c._id}')" style="padding:5px 10px; margin:2px; background:#335; color:white; border:none; border-radius:4px; cursor:pointer;">editar</button>
+                            <button onclick="deletarCrime('${c._id}')" style="padding:5px 10px; margin:2px; background:#e74c3c; color:white; border:none; border-radius:4px; cursor:pointer;">apagar</button>
+                        </td>
+                    </tr>
+                `;
+            }
+            document.getElementById("linhasCrimes").innerHTML = html;
+        } catch (e) {
+            console.error("Erro:", e);
+            document.getElementById("linhasCrimes").innerHTML =
+                '<tr><td colspan="10" style="text-align:center; padding:20px; color:#e74c3c;">Erro de conexao. Verifique o servidor.</td></tr>';
+        }
+    }
+
+    async function salvarCrime() {
+        let id = document.getElementById('crimeID').value.trim();
+        let nome = document.getElementById('crimeNome').value.trim();
+        let genero = document.getElementById('crimeGenero').value;
+        let dataDetencao = document.getElementById('crimeDetencao').value;
+        let dataSaida = document.getElementById('crimeSaida').value;
+        let provincia = document.getElementById('crimeProvincia').value;
+        let altura = document.getElementById('crimeAltura').value;
+        let status = document.getElementById('crimeStatus').value;
+        let fotoInput = document.getElementById('crimeFoto');
+
+        let partesNome = nome.split(' ').filter(p => p.length > 0);
+
+        if (!id) { alert("ID vazio!"); return; }
+        if (partesNome.length < 3) { alert("Nome deve ter minimo 3 nomes!"); return; }
+        if (!genero) { alert("GENERO nao seleccionado!"); return; }
+        if (!dataDetencao) { alert("DATA DETENCAO nao preenchida!"); return; }
+        if (!dataSaida) { alert("DATA SAIDA nao preenchida!"); return; }
+        if (!provincia) { alert("PROVINCIA nao seleccionada!"); return; }
+        if (!altura) { alert("ALTURA nao seleccionada!"); return; }
+        if (!status) { alert("STATUS nao seleccionado!"); return; }
+
+        let btn = document.getElementById('btnSalvarCrime');
+        btn.textContent = "A guardar...";
+        btn.disabled = true;
+
+        try {
+            let nomeFoto = '';
+            if (fotoInput.files[0]) {
+                let formData = new FormData();
+                formData.append('foto', fotoInput.files[0]);
+                let uploadRes = await fetch("https://pamperer-unroasted-handrail.ngrok-free.dev/upload", { method: "POST", body: formData });
+                let uploadData = await uploadRes.json();
+                nomeFoto = uploadData.ficheiro;
+            }
+            let res = await fetch("https://pamperer-unroasted-handrail.ngrok-free.dev/crimes", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id, nome, genero, dataDetencao, dataSaida, provincia, altura, status, foto: nomeFoto })
+            });
+            if (res.ok) {
+                alert("Crime adicionado!");
+                fecharModalCrime();
+                document.querySelectorAll('#modalCrimes input').forEach(i => i.value = '');
+                document.querySelectorAll('#modalCrimes select').forEach(s => s.value = '');
+                setTimeout(actualizarCrimes, 300);
+            } else {
+                let erro = await res.json();
+                alert("Erro: " + erro.erro);
+            }
+        } catch (e) {
+            alert("Servidor offline!");
+        }
+
+        btn.textContent = "Adicionar Crime";
+        btn.disabled = false;
+    }
+
+    async function editarCrime(id) {
+        let nome = prompt("Novo nome:");
+        let genero = prompt("Genero:");
+        let dataDetencao = prompt("Data detencao (YYYY-MM-DD):");
+        let dataSaida = prompt("Data saida (YYYY-MM-DD):");
+        let provincia = prompt("Provincia:");
+        let altura = prompt("Altura:");
+        let status = prompt("Status (Detido/Solto):");
+
+        if (!nome || !genero || !dataDetencao || !dataSaida || !provincia || !altura || !status) {
+            alert("Preencha TODOS os campos!");
+            return;
+        }
+        try {
+            let res = await fetch("https://pamperer-unroasted-handrail.ngrok-free.dev/crimes/" + id, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nome, genero, dataDetencao, dataSaida, provincia, altura, status })
+            });
+            if (res.ok) { setTimeout(actualizarCrimes, 300); alert("Atualizado!"); }
+            else { alert("Erro ao atualizar"); }
+        } catch (e) { alert("Erro: " + e.message); }
+    }
+
+    async function deletarCrime(id) {
+        if (confirm("Confirmar exclusao do crime?")) {
+            try {
+                let res = await fetch("https://pamperer-unroasted-handrail.ngrok-free.dev/crimes/" + id, { method: "DELETE" });
+                if (res.ok) { setTimeout(actualizarCrimes, 300); alert("Excluido!"); }
+            } catch (e) { alert("Erro ao excluir"); }
+        }
+    }
+
+    async function actualizarOcorrencias() {
+        try {
+            let res = await fetch("https://pamperer-unroasted-handrail.ngrok-free.dev/ocorrencias");
+            if (!res.ok) throw new Error("Erro: " + res.status);
+            let dados = await res.json();
+            let html = "";
+            if (dados.length === 0) {
+                html = '<tr><td colspan="8" style="text-align:center; padding:20px;">Nenhuma ocorrencia registada.</td></tr>';
+            }
+            for (let o of dados) {
+                let statusCor = o.status === 'Aceite' ? '#27ae60' : '#e74c3c';
+                let mapaLink = `https://www.google.com/maps?q=${o.latitude},${o.longitude}`;
+                html += `
+                    <tr>
+                        <td>${o.id ?? 'N/A'}</td>
+                        <td>${o.idAgente ?? 'N/A'}</td>
+                        <td>
+                            ${o.latitude}, ${o.longitude}
+                            <a href="${mapaLink}" target="_blank"
+                               style="margin-left:5px; padding:3px 8px; background:#335; color:white; border-radius:4px; font-size:11px; text-decoration:none;">
+                                VER MAPA
+                            </a>
+                        </td>
+                        <td>${o.data ?? 'N/A'}</td>
+                        <td>${o.hora ?? 'N/A'}</td>
+                        <td>${o.vezes ?? 'N/A'}</td>
+                        <td style="color:${statusCor}; font-weight:bold;">${o.status ?? 'N/A'}</td>
+                        <td>
+                            <button onclick="deletarOcorrencia('${o._id}')"
+                                    style="padding:5px 10px; background:#e74c3c; color:white; border:none; border-radius:4px; cursor:pointer;">
+                                apagar
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }
+            document.getElementById("linhasOcorrencias").innerHTML = html;
+        } catch (e) {
+            console.error("Erro:", e);
+            document.getElementById("linhasOcorrencias").innerHTML =
+                '<tr><td colspan="8" style="text-align:center; padding:20px; color:#e74c3c;">Erro de conexao. Verifique o servidor.</td></tr>';
+        }
+    }
+
+    async function deletarOcorrencia(id) {
+        if (confirm("Confirmar exclusao da ocorrencia?")) {
+            try {
+                let res = await fetch("https://pamperer-unroasted-handrail.ngrok-free.dev/ocorrencias/" + id, { method: "DELETE" });
+                if (res.ok) { setTimeout(actualizarOcorrencias, 300); alert("Excluido!"); }
+            } catch (e) { alert("Erro ao excluir"); }
+        }
+    }
+
+    window.onload = () => {
+        actualisar();
+        actualizarCrimes();
+        actualizarOcorrencias();
+        setInterval(actualizarOcorrencias, 10000);
+    };
+</script>
+
+</body>
+</html>
