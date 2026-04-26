@@ -46,6 +46,7 @@ const Crime = mongoose.model('Crime', new mongoose.Schema({
 
 // ── Ocorrência — ID automático, data/hora do servidor ──
 const OcorrenciaSchema = new mongoose.Schema({
+    id:        { type: String, required: true },
     idAgente:  { type: String, required: true },
     latitude:  { type: String, required: true },
     longitude: { type: String, required: true },
