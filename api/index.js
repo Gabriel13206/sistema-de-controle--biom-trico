@@ -44,7 +44,6 @@ const Crime = mongoose.model('Crime', new mongoose.Schema({
     foto:         { type: String, default: '' }
 }))
 
-// ── Ocorrência — ID automático, data/hora do servidor ──
 const OcorrenciaSchema = new mongoose.Schema({
     id:        { type: String, required: true },
     idAgente:  { type: String, required: true },
@@ -56,15 +55,13 @@ const OcorrenciaSchema = new mongoose.Schema({
     status:    { type: String, required: true }
 })
 
-// ID sequencial automático
+// Apenas data e hora são geradas pelo servidor — id vem do ESP
 OcorrenciaSchema.pre('save', async function(next) {
     if (!this.isNew) return next()
-    const ultima = await Ocorrencia.findOne().sort({ _id: -1 })
-    this.id = ultima ? String(Number(ultima.id || 0) + 1) : '1'
 
     // Data e hora do servidor (Angola UTC+1)
     const agora = new Date()
-    agora.setHours(agora.getHours() + 1) // UTC+1 Angola
+    agora.setHours(agora.getHours() + 1)
     const dd   = String(agora.getDate()).padStart(2, '0')
     const mm   = String(agora.getMonth() + 1).padStart(2, '0')
     const yyyy = agora.getFullYear()
@@ -76,7 +73,6 @@ OcorrenciaSchema.pre('save', async function(next) {
     next()
 })
 
-OcorrenciaSchema.add({ id: { type: String } })
 const Ocorrencia = mongoose.model('Ocorrencia', OcorrenciaSchema)
 
 const Usuario = mongoose.model('Usuario', new mongoose.Schema({
@@ -178,7 +174,6 @@ app.delete('/crimes/:id', async (req, res) => {
     } catch(e) { res.status(500).json({ erro: e.message }) }
 })
 
-// ── Ocorrencias — ID e data/hora automáticos ──
 app.get('/ocorrencias', async (req, res) => {
     try { res.json(await Ocorrencia.find().sort({ _id: -1 })) }
     catch(e) { res.status(500).json({ erro: e.message }) }
