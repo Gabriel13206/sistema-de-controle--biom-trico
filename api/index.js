@@ -46,20 +46,17 @@ const Crime = mongoose.model('Crime', new mongoose.Schema({
 
 const OcorrenciaSchema = new mongoose.Schema({
     id:        { type: String, required: true },
-    idAgente:  { type: String, required: true },
-    latitude:  { type: String, required: true },
-    longitude: { type: String, required: true },
+    idAgente:  { type: Number, required: true },
+    latitude:  { type: Number, required: true },
+    longitude: { type: Number, required: true },
     data:      { type: String },
     hora:      { type: String },
     vezes:     { type: Number, required: true },
     status:    { type: String, required: true }
 })
 
-// Apenas data e hora são geradas pelo servidor — id vem do ESP
 OcorrenciaSchema.pre('save', async function(next) {
     if (!this.isNew) return next()
-
-    // Data e hora do servidor (Angola UTC+1)
     const agora = new Date()
     agora.setHours(agora.getHours() + 1)
     const dd   = String(agora.getDate()).padStart(2, '0')
