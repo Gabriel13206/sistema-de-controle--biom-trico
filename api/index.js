@@ -3,22 +3,19 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const path = require('path')
 const app = express()
- 
+
 app.use(express.json())
 app.use(cors())
- 
-// ── Servir ficheiros estáticos da pasta public ──
+
 app.use(express.static(path.join(__dirname, '../public')))
- 
-// ── Ligação ao MongoDB via variável de ambiente ──
+
 let isConnected = false
 async function connectDB() {
     if (isConnected) return
     await mongoose.connect(process.env.MONGO_URI)
     isConnected = true
 }
- 
-// ── Modelos ──
+
 const Policia = mongoose.model('Policia', new mongoose.Schema({
     id:            { type: String, required: true, unique: true },
     nome:          { type: String, required: true },
@@ -34,7 +31,7 @@ const Policia = mongoose.model('Policia', new mongoose.Schema({
     foto:          { type: String, default: '' },
     status:        { type: String, default: 'activo' }
 }))
- 
+
 const Crime = mongoose.model('Crime', new mongoose.Schema({
     id:           { type: String, required: true, unique: true },
     nome:         { type: String, required: true },
@@ -46,25 +43,47 @@ const Crime = mongoose.model('Crime', new mongoose.Schema({
     status:       { type: String, required: true },
     foto:         { type: String, default: '' }
 }))
- 
-const Ocorrencia = mongoose.model('Ocorrencia', new mongoose.Schema({
-    id:        { type: String, required: true, unique: true },
+
+// ── Ocorrência — ID automático, data/hora do servidor ──
+const OcorrenciaSchema = new mongoose.Schema({
     idAgente:  { type: String, required: true },
     latitude:  { type: String, required: true },
     longitude: { type: String, required: true },
-    data:      { type: String, required: true },
-    hora:      { type: String, required: true },
+    data:      { type: String },
+    hora:      { type: String },
     vezes:     { type: Number, required: true },
     status:    { type: String, required: true }
-}))
- 
+})
+
+// ID sequencial automático
+OcorrenciaSchema.pre('save', async function(next) {
+    if (!this.isNew) return next()
+    const ultima = await Ocorrencia.findOne().sort({ _id: -1 })
+    this.id = ultima ? String(Number(ultima.id || 0) + 1) : '1'
+
+    // Data e hora do servidor (Angola UTC+1)
+    const agora = new Date()
+    agora.setHours(agora.getHours() + 1) // UTC+1 Angola
+    const dd   = String(agora.getDate()).padStart(2, '0')
+    const mm   = String(agora.getMonth() + 1).padStart(2, '0')
+    const yyyy = agora.getFullYear()
+    const hh   = String(agora.getHours()).padStart(2, '0')
+    const min  = String(agora.getMinutes()).padStart(2, '0')
+    const ss   = String(agora.getSeconds()).padStart(2, '0')
+    this.data = `${dd}-${mm}-${yyyy}`
+    this.hora = `${hh}:${min}:${ss}`
+    next()
+})
+
+OcorrenciaSchema.add({ id: { type: String } })
+const Ocorrencia = mongoose.model('Ocorrencia', OcorrenciaSchema)
+
 const Usuario = mongoose.model('Usuario', new mongoose.Schema({
     usuario: { type: String, required: true, unique: true },
     senha:   { type: String, required: true },
     perfil:  { type: String, default: 'admin' }
 }))
- 
-// ── Middleware que conecta ao MongoDB antes de cada pedido ──
+
 app.use(async (req, res, next) => {
     try {
         await connectDB()
@@ -73,28 +92,22 @@ app.use(async (req, res, next) => {
         res.status(500).json({ erro: 'Erro de conexao com a base de dados' })
     }
 })
- 
-// ── Criar admin padrão ──
+
 async function criarAdminPadrao() {
     try {
         await connectDB()
         const existe = await Usuario.findOne({ usuario: 'admin' })
         if (!existe) {
             await new Usuario({ usuario: 'admin', senha: 'admin123', perfil: 'admin' }).save()
-            console.log('Utilizador admin criado')
         }
-    } catch(e) {
-        console.log('Erro ao criar admin:', e.message)
-    }
+    } catch(e) {}
 }
 criarAdminPadrao()
- 
-// ── Rota raiz → login ──
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/login.html'))
 })
- 
-// ── Login ──
+
 app.post('/login', async (req, res) => {
     try {
         const { usuario, senha } = req.body
@@ -106,8 +119,7 @@ app.post('/login', async (req, res) => {
         res.status(500).json({ erro: e.message })
     }
 })
- 
-// ── Policia ──
+
 app.get('/policia', async (req, res) => {
     try { res.json(await Policia.find()) }
     catch(e) { res.status(500).json({ erro: e.message }) }
@@ -132,9 +144,7 @@ app.patch('/policia/:id/status', async (req, res) => {
         agente.status = agente.status === 'activo' ? 'bloqueado' : 'activo'
         await agente.save()
         res.json({ ok: true, status: agente.status })
-    } catch(e) {
-        res.status(500).json({ erro: e.message })
-    }
+    } catch(e) { res.status(500).json({ erro: e.message }) }
 })
 app.delete('/policia/:id', async (req, res) => {
     try {
@@ -142,8 +152,7 @@ app.delete('/policia/:id', async (req, res) => {
         res.json({ ok: true })
     } catch(e) { res.status(500).json({ erro: e.message }) }
 })
- 
-// ── Crimes ──
+
 app.get('/crimes', async (req, res) => {
     try { res.json(await Crime.find()) }
     catch(e) { res.status(500).json({ erro: e.message }) }
@@ -167,15 +176,18 @@ app.delete('/crimes/:id', async (req, res) => {
         res.json({ ok: true })
     } catch(e) { res.status(500).json({ erro: e.message }) }
 })
- 
-// ── Ocorrencias ──
+
+// ── Ocorrencias — ID e data/hora automáticos ──
 app.get('/ocorrencias', async (req, res) => {
     try { res.json(await Ocorrencia.find().sort({ _id: -1 })) }
     catch(e) { res.status(500).json({ erro: e.message }) }
 })
 app.post('/ocorrencias', async (req, res) => {
     try {
-        res.status(201).json(await new Ocorrencia(req.body).save())
+        // Ignora id, data e hora que vêm do ESP — servidor gera os seus
+        const { idAgente, latitude, longitude, vezes, status } = req.body
+        const nova = new Ocorrencia({ idAgente, latitude, longitude, vezes, status })
+        res.status(201).json(await nova.save())
     } catch(e) { res.status(400).json({ erro: e.message }) }
 })
 app.delete('/ocorrencias/:id', async (req, res) => {
@@ -184,8 +196,7 @@ app.delete('/ocorrencias/:id', async (req, res) => {
         res.json({ ok: true })
     } catch(e) { res.status(500).json({ erro: e.message }) }
 })
- 
-// ── Verificar ID (usado pelo ESP) ──
+
 app.get('/verificar/:id', async (req, res) => {
     try {
         const id = req.params.id
@@ -199,6 +210,5 @@ app.get('/verificar/:id', async (req, res) => {
         res.json({ resultado: 'bloqueia', tipo: 'desconhecido', nome: 'Desconhecido' })
     } catch(e) { res.status(500).json({ erro: e.message }) }
 })
- 
-// ── Exportar para o Vercel (SEM app.listen) ──
+
 module.exports = app
