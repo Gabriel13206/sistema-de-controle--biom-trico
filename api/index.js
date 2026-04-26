@@ -185,9 +185,8 @@ app.get('/ocorrencias', async (req, res) => {
 })
 app.post('/ocorrencias', async (req, res) => {
     try {
-        // Ignora id, data e hora que vêm do ESP — servidor gera os seus
-        const { idAgente, latitude, longitude, vezes, status } = req.body
-        const nova = new Ocorrencia({ idAgente, latitude, longitude, vezes, status })
+        const { id, idAgente, latitude, longitude, vezes, status } = req.body
+        const nova = new Ocorrencia({ id, idAgente, latitude, longitude, vezes, status })
         res.status(201).json(await nova.save())
     } catch(e) { res.status(400).json({ erro: e.message }) }
 })
