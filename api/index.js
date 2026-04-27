@@ -83,7 +83,7 @@ app.use(async (req, res, next) => {
         await connectDB()
         next()
     } catch (e) {
-        res.status(500).json({ erro: 'Erro de conexao com a base de dados' })
+        next(e)
     }
 })
 
