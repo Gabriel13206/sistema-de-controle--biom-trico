@@ -77,13 +77,12 @@ const Usuario = mongoose.model('Usuario', new mongoose.Schema({
     senha:   { type: String, required: true },
     perfil:  { type: String, default: 'admin' }
 }))
-
 app.use(async (req, res, next) => {
     try {
         await connectDB()
         next()
     } catch (e) {
-        next(e)
+        res.status(500).json({ erro: 'Erro de conexao com a base de dados' })
     }
 })
 
