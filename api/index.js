@@ -1,23 +1,21 @@
-
-Copiar
-
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const path = require('path')
 const app = express()
- 
+
 app.use(express.json())
 app.use(cors())
+
 app.use(express.static(path.join(__dirname, '../public')))
- 
+
 let isConnected = false
 async function connectDB() {
     if (isConnected) return
     await mongoose.connect(process.env.MONGO_URI)
     isConnected = true
 }
- 
+
 const Policia = mongoose.model('Policia', new mongoose.Schema({
     id:            { type: String, required: true, unique: true },
     nome:          { type: String, required: true },
@@ -33,7 +31,7 @@ const Policia = mongoose.model('Policia', new mongoose.Schema({
     foto:          { type: String, default: '' },
     status:        { type: String, default: 'activo' }
 }))
- 
+
 const Crime = mongoose.model('Crime', new mongoose.Schema({
     id:           { type: String, required: true, unique: true },
     nome:         { type: String, required: true },
@@ -45,7 +43,7 @@ const Crime = mongoose.model('Crime', new mongoose.Schema({
     status:       { type: String, required: true },
     foto:         { type: String, default: '' }
 }))
- 
+
 const OcorrenciaSchema = new mongoose.Schema({
     id:        { type: String, required: true },
     idAgente:  { type: Number, required: true },
@@ -56,7 +54,7 @@ const OcorrenciaSchema = new mongoose.Schema({
     vezes:     { type: Number, required: true },
     status:    { type: String, required: true }
 })
- 
+
 OcorrenciaSchema.pre('save', async function(next) {
     if (!this.isNew) return next()
     const agora = new Date()
@@ -71,24 +69,24 @@ OcorrenciaSchema.pre('save', async function(next) {
     this.hora = `${hh}:${min}:${ss}`
     next()
 })
- 
+
 const Ocorrencia = mongoose.model('Ocorrencia', OcorrenciaSchema)
- 
+
 const Usuario = mongoose.model('Usuario', new mongoose.Schema({
     usuario: { type: String, required: true, unique: true },
     senha:   { type: String, required: true },
     perfil:  { type: String, default: 'admin' }
 }))
- 
+
 app.use(async (req, res, next) => {
     try {
         await connectDB()
         next()
     } catch (e) {
-        res.status(500).json({ erro: 'Erro de conexao com a base de dados' })
+       res.status(500).json({ erro: 'Erro de conexao' })
     }
 })
- 
+
 async function criarAdminPadrao() {
     try {
         await connectDB()
@@ -99,11 +97,11 @@ async function criarAdminPadrao() {
     } catch(e) {}
 }
 criarAdminPadrao()
- 
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/login.html'))
 })
- 
+
 app.post('/login', async (req, res) => {
     try {
         const { usuario, senha } = req.body
@@ -115,7 +113,7 @@ app.post('/login', async (req, res) => {
         res.status(500).json({ erro: e.message })
     }
 })
- 
+
 app.get('/policia', async (req, res) => {
     try { res.json(await Policia.find()) }
     catch(e) { res.status(500).json({ erro: e.message }) }
@@ -148,7 +146,7 @@ app.delete('/policia/:id', async (req, res) => {
         res.json({ ok: true })
     } catch(e) { res.status(500).json({ erro: e.message }) }
 })
- 
+
 app.get('/crimes', async (req, res) => {
     try { res.json(await Crime.find()) }
     catch(e) { res.status(500).json({ erro: e.message }) }
@@ -172,7 +170,7 @@ app.delete('/crimes/:id', async (req, res) => {
         res.json({ ok: true })
     } catch(e) { res.status(500).json({ erro: e.message }) }
 })
- 
+
 app.get('/ocorrencias', async (req, res) => {
     try { res.json(await Ocorrencia.find().sort({ _id: -1 })) }
     catch(e) { res.status(500).json({ erro: e.message }) }
@@ -190,7 +188,7 @@ app.delete('/ocorrencias/:id', async (req, res) => {
         res.json({ ok: true })
     } catch(e) { res.status(500).json({ erro: e.message }) }
 })
- 
+
 app.get('/verificar/:id', async (req, res) => {
     try {
         const id = req.params.id
@@ -204,5 +202,5 @@ app.get('/verificar/:id', async (req, res) => {
         res.json({ resultado: 'bloqueia', tipo: 'desconhecido', nome: 'Desconhecido' })
     } catch(e) { res.status(500).json({ erro: e.message }) }
 })
- 
+
 module.exports = app
