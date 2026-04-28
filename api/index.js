@@ -55,8 +55,8 @@ const OcorrenciaSchema = new mongoose.Schema({
     status:    { type: String, required: true }
 })
 
-OcorrenciaSchema.pre('save', async function(done) {
-    if (!this.isNew) return done()
+OcorrenciaSchema.pre('save', async function() {
+    if (!this.isNew) return
     const agora = new Date()
     agora.setHours(agora.getHours() + 1)
     const dd   = String(agora.getDate()).padStart(2, '0')
@@ -65,9 +65,8 @@ OcorrenciaSchema.pre('save', async function(done) {
     const hh   = String(agora.getHours()).padStart(2, '0')
     const min  = String(agora.getMinutes()).padStart(2, '0')
     const ss   = String(agora.getSeconds()).padStart(2, '0')
-    this.data = `${dd}-${mm}-${yyyy}`
-    this.hora = `${hh}:${min}:${ss}`
-    done()
+    this.data = `\-\-\`
+    this.hora = `\:\:\`
 })
 
 const Ocorrencia = mongoose.model('Ocorrencia', OcorrenciaSchema)
@@ -204,4 +203,6 @@ app.get('/verificar/:id', async (req, res) => {
 })
 
 module.exports = app
+
+
 
