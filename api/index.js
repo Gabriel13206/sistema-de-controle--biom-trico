@@ -3,19 +3,18 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const path = require('path')
 const app = express()
-
+ 
 app.use(express.json())
 app.use(cors())
-
 app.use(express.static(path.join(__dirname, '../public')))
-
+ 
 let isConnected = false
 async function connectDB() {
     if (isConnected) return
     await mongoose.connect(process.env.MONGO_URI)
     isConnected = true
 }
-
+ 
 const Policia = mongoose.model('Policia', new mongoose.Schema({
     id:            { type: String, required: true, unique: true },
     nome:          { type: String, required: true },
@@ -31,7 +30,7 @@ const Policia = mongoose.model('Policia', new mongoose.Schema({
     foto:          { type: String, default: '' },
     status:        { type: String, default: 'activo' }
 }))
-
+ 
 const Crime = mongoose.model('Crime', new mongoose.Schema({
     id:           { type: String, required: true, unique: true },
     nome:         { type: String, required: true },
@@ -43,50 +42,49 @@ const Crime = mongoose.model('Crime', new mongoose.Schema({
     status:       { type: String, required: true },
     foto:         { type: String, default: '' }
 }))
-
+ 
 const OcorrenciaSchema = new mongoose.Schema({
-    id:        { type: String, required: true },
-    idAgente:  { type: Number, required: true },
-    latitude:  { type: Number, required: true },
-    longitude: { type: Number, required: true },
-    data:      { type: String },
-    hora:      { type: String },
-    vezes:     { type: Number, required: true },
-    status:    { type: String, required: true }
+    id:         { type: String, required: true },
+    idAgente:   { type: Number, required: true },
+    idBilhete:  { type: String, default: '' },
+    latitude:   { type: Number, required: true },
+    longitude:  { type: Number, required: true },
+    data:       { type: String },
+    hora:       { type: String },
+    vezes:      { type: Number, required: true },
+    status:     { type: String, required: true }
 })
-
-OcorrenciaSchema.pre('save', async function(done) {
-    if (!this.isNew) return done()
+ 
+OcorrenciaSchema.pre('save', async function() {
+    if (!this.isNew) return
     const agora = new Date()
-    agora.setHours(agora.getHours() + 1)
     const dd   = String(agora.getDate()).padStart(2, '0')
     const mm   = String(agora.getMonth() + 1).padStart(2, '0')
     const yyyy = agora.getFullYear()
     const hh   = String(agora.getHours()).padStart(2, '0')
     const min  = String(agora.getMinutes()).padStart(2, '0')
     const ss   = String(agora.getSeconds()).padStart(2, '0')
-    this.data = `${dd}-${mm}-${yyyy}`
-    this.hora = `${hh}:${min}:${ss}`
-    done()
+    this.data = dd + '-' + mm + '-' + yyyy
+    this.hora = hh + ':' + min + ':' + ss
 })
-
+ 
 const Ocorrencia = mongoose.model('Ocorrencia', OcorrenciaSchema)
-
+ 
 const Usuario = mongoose.model('Usuario', new mongoose.Schema({
     usuario: { type: String, required: true, unique: true },
     senha:   { type: String, required: true },
     perfil:  { type: String, default: 'admin' }
 }))
-
+ 
 app.use(async (req, res, next) => {
     try {
         await connectDB()
         next()
     } catch (e) {
-       res.status(500).json({ erro: 'Erro de conexao' })
+        res.status(500).json({ erro: 'Erro de conexao' })
     }
 })
-
+ 
 async function criarAdminPadrao() {
     try {
         await connectDB()
@@ -97,11 +95,11 @@ async function criarAdminPadrao() {
     } catch(e) {}
 }
 criarAdminPadrao()
-
+ 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/login.html'))
 })
-
+ 
 app.post('/login', async (req, res) => {
     try {
         const { usuario, senha } = req.body
@@ -113,7 +111,7 @@ app.post('/login', async (req, res) => {
         res.status(500).json({ erro: e.message })
     }
 })
-
+ 
 app.get('/policia', async (req, res) => {
     try { res.json(await Policia.find()) }
     catch(e) { res.status(500).json({ erro: e.message }) }
@@ -146,7 +144,7 @@ app.delete('/policia/:id', async (req, res) => {
         res.json({ ok: true })
     } catch(e) { res.status(500).json({ erro: e.message }) }
 })
-
+ 
 app.get('/crimes', async (req, res) => {
     try { res.json(await Crime.find()) }
     catch(e) { res.status(500).json({ erro: e.message }) }
@@ -170,15 +168,15 @@ app.delete('/crimes/:id', async (req, res) => {
         res.json({ ok: true })
     } catch(e) { res.status(500).json({ erro: e.message }) }
 })
-
+ 
 app.get('/ocorrencias', async (req, res) => {
     try { res.json(await Ocorrencia.find().sort({ _id: -1 })) }
     catch(e) { res.status(500).json({ erro: e.message }) }
 })
 app.post('/ocorrencias', async (req, res) => {
     try {
-        const { id, idAgente, latitude, longitude, vezes, status } = req.body
-        const nova = new Ocorrencia({ id, idAgente, latitude, longitude, vezes, status })
+        const { id, idAgente, idBilhete, latitude, longitude, vezes, status } = req.body
+        const nova = new Ocorrencia({ id, idAgente, idBilhete, latitude, longitude, vezes, status })
         res.status(201).json(await nova.save())
     } catch(e) { res.status(400).json({ erro: e.message }) }
 })
@@ -188,7 +186,7 @@ app.delete('/ocorrencias/:id', async (req, res) => {
         res.json({ ok: true })
     } catch(e) { res.status(500).json({ erro: e.message }) }
 })
-
+ 
 app.get('/verificar/:id', async (req, res) => {
     try {
         const id = req.params.id
@@ -202,6 +200,5 @@ app.get('/verificar/:id', async (req, res) => {
         res.json({ resultado: 'bloqueia', tipo: 'desconhecido', nome: 'Desconhecido' })
     } catch(e) { res.status(500).json({ erro: e.message }) }
 })
-
+ 
 module.exports = app
-
