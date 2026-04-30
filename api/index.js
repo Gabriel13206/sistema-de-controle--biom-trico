@@ -57,17 +57,15 @@ const OcorrenciaSchema = new mongoose.Schema({
  
 OcorrenciaSchema.pre('save', async function() {
     if (!this.isNew) return
-    if (!this.data || !this.hora) {
-        const agora = new Date()
-        const dd   = String(agora.getDate()).padStart(2, '0')
-        const mm   = String(agora.getMonth() + 1).padStart(2, '0')
-        const yyyy = agora.getFullYear()
-        const hh   = String(agora.getHours()).padStart(2, '0')
-        const min  = String(agora.getMinutes()).padStart(2, '0')
-        const ss   = String(agora.getSeconds()).padStart(2, '0')
-        if (!this.data) this.data = dd + '-' + mm + '-' + yyyy
-        if (!this.hora) this.hora = hh + ':' + min + ':' + ss
-    }
+    const agora = new Date(new Date().toLocaleString("en-US", { timeZone: "Africa/Luanda" }))
+    const dd   = String(agora.getDate()).padStart(2, '0')
+    const mm   = String(agora.getMonth() + 1).padStart(2, '0')
+    const yyyy = agora.getFullYear()
+    const hh   = String(agora.getHours()).padStart(2, '0')
+    const min  = String(agora.getMinutes()).padStart(2, '0')
+    const ss   = String(agora.getSeconds()).padStart(2, '0')
+    this.data = dd + '-' + mm + '-' + yyyy
+    this.hora = hh + ':' + min + ':' + ss
 })
  
 const Ocorrencia = mongoose.model('Ocorrencia', OcorrenciaSchema)
