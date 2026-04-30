@@ -122,14 +122,14 @@ app.post('/policia', async (req, res) => {
     try {
         if (await Policia.findOne({ id: req.body.id })) return res.status(400).json({ erro: 'ID ja existe!' })
         res.status(201).json(await new Policia(req.body).save())
-    } catch(e) { res.status(400).json({ erro: e.message }) }
+    } catch(e) { res.status(400).json({ erro: e.message, detalhes: e.errors }) }
 })
 app.put('/policia/:id', async (req, res) => {
     try {
         let doc = await Policia.findByIdAndUpdate(req.params.id, req.body, { new: true })
         if (!doc) return res.status(404).json({ erro: 'Nao encontrado' })
         res.json(doc)
-    } catch(e) { res.status(400).json({ erro: e.message }) }
+    } catch(e) { res.status(400).json({ erro: e.message, detalhes: e.errors }) }
 })
 app.patch('/policia/:id/status', async (req, res) => {
     try {
@@ -155,14 +155,14 @@ app.post('/crimes', async (req, res) => {
     try {
         if (await Crime.findOne({ id: req.body.id })) return res.status(400).json({ erro: 'ID ja existe!' })
         res.status(201).json(await new Crime(req.body).save())
-    } catch(e) { res.status(400).json({ erro: e.message }) }
+    } catch(e) { res.status(400).json({ erro: e.message, detalhes: e.errors }) }
 })
 app.put('/crimes/:id', async (req, res) => {
     try {
         let doc = await Crime.findByIdAndUpdate(req.params.id, req.body, { new: true })
         if (!doc) return res.status(404).json({ erro: 'Nao encontrado' })
         res.json(doc)
-    } catch(e) { res.status(400).json({ erro: e.message }) }
+    } catch(e) { res.status(400).json({ erro: e.message, detalhes: e.errors }) }
 })
 app.delete('/crimes/:id', async (req, res) => {
     try {
@@ -181,7 +181,7 @@ app.post('/ocorrencias', async (req, res) => {
         const idBilhete = req.body.idBilhete || req.body.bilhete || ''
         const nova = new Ocorrencia({ id, idAgente, idBilhete, latitude, longitude, data, hora, vezes, status })
         res.status(201).json(await nova.save())
-    } catch(e) { res.status(400).json({ erro: e.message }) }
+    } catch(e) { res.status(400).json({ erro: e.message, detalhes: e.errors }) }
 })
 app.delete('/ocorrencias/:id', async (req, res) => {
     try {
