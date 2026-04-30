@@ -175,7 +175,8 @@ app.get('/ocorrencias', async (req, res) => {
 })
 app.post('/ocorrencias', async (req, res) => {
     try {
-        const { id, idAgente, idBilhete, latitude, longitude, vezes, status } = req.body
+        const { id, idAgente, latitude, longitude, vezes, status } = req.body
+const idBilhete = req.body.idBilhete || req.body.bilhete || ''
         const nova = new Ocorrencia({ id, idAgente, idBilhete, latitude, longitude, vezes, status })
         res.status(201).json(await nova.save())
     } catch(e) { res.status(400).json({ erro: e.message }) }
