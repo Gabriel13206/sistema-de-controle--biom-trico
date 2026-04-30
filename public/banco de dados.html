@@ -601,6 +601,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>ID BILHETE</th>
                             <th>ID AGENTE</th>
                             <th>GPS</th>
                             <th>DATA</th>
@@ -611,7 +612,7 @@
                         </tr>
                     </thead>
                     <tbody id="linhasOcorrencias">
-                        <tr class="empty-row"><td colspan="8">A carregar...</td></tr>
+                        <tr class="empty-row"><td colspan="9">A carregar...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1053,13 +1054,14 @@
 
             let html = '';
             if (!dados.length) {
-                html = '<tr class="empty-row"><td colspan="8">Nenhuma ocorrência registada.</td></tr>';
+                html = '<tr class="empty-row"><td colspan="9">Nenhuma ocorrência registada.</td></tr>';
             } else {
                 for (const o of dados) {
                     const mapaLink = `https://www.google.com/maps?q=${o.latitude},${o.longitude}`;
                     html += `
                     <tr>
                         <td>${o.id ?? '—'}</td>
+                        <td>${o.idBilhete ?? '—'}</td>
                         <td>${o.idAgente ?? '—'}</td>
                         <td>
                             ${o.latitude}, ${o.longitude}
@@ -1080,7 +1082,7 @@
             document.getElementById("linhasOcorrencias").innerHTML = html;
         } catch {
             document.getElementById("linhasOcorrencias").innerHTML =
-                '<tr class="empty-row"><td colspan="8" style="color:#ef4444;">Erro de conexão. Verifique o servidor.</td></tr>';
+                '<tr class="empty-row"><td colspan="9" style="color:#ef4444;">Erro de conexão. Verifique o servidor.</td></tr>';
         }
     }
 
