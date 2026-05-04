@@ -7,440 +7,90 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-            background: #f0f2f5;
-        }
-
-        /* ── Sidebar ── */
-        nav.sidebar {
-            width: 68px;
-            height: 100vh;
-            background: #0A0F1C;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px 0;
-            gap: 4px;
-            transition: width 0.22s ease;
-            overflow: hidden;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 10;
-        }
+        body { font-family: 'Segoe UI', Arial, Helvetica, sans-serif; display: flex; height: 100vh; overflow: hidden; background: #f0f2f5; }
+        nav.sidebar { width: 68px; height: 100vh; background: #0A0F1C; display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 4px; transition: width 0.22s ease; overflow: hidden; flex-shrink: 0; position: relative; z-index: 10; }
         nav.sidebar:hover { width: 220px; }
-
-        .sidebar-logo {
-            width: 36px;
-            height: 36px;
-            background: #1E3A5F;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 16px;
-            flex-shrink: 0;
-        }
+        .sidebar-logo { width: 36px; height: 36px; background: #1E3A5F; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; flex-shrink: 0; }
         .sidebar-logo i { color: #7eb4f7; font-size: 18px; }
-
-        .nav-item {
-            width: calc(100% - 16px);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 11px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            color: #8899bb;
-            font-size: 14px;
-            white-space: nowrap;
-            text-decoration: none;
-            transition: background 0.15s, color 0.15s;
-        }
-        .nav-item:hover, .nav-item.active {
-            background: #1E3A5F;
-            color: #fff;
-        }
+        .nav-item { width: calc(100% - 16px); display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 8px; cursor: pointer; color: #8899bb; font-size: 14px; white-space: nowrap; text-decoration: none; transition: background 0.15s, color 0.15s; }
+        .nav-item:hover, .nav-item.active { background: #1E3A5F; color: #fff; }
         .nav-item i { font-size: 20px; flex-shrink: 0; width: 22px; text-align: center; }
-        .nav-label {
-            opacity: 0;
-            transition: opacity 0.12s 0.06s;
-            white-space: nowrap;
-        }
+        .nav-label { opacity: 0; transition: opacity 0.12s 0.06s; white-space: nowrap; }
         nav.sidebar:hover .nav-label { opacity: 1; }
         .nav-spacer { flex: 1; }
-
-        /* ── Main ── */
-        .main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        /* ── Topbar ── */
-        .topbar {
-            height: 54px;
-            background: #fff;
-            border-bottom: 1px solid #e4e7ec;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            flex-shrink: 0;
-        }
-        .topbar-left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        .topbar-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: #0A0F1C;
-        }
-        .search-box {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #f0f2f5;
-            border: 1px solid #e4e7ec;
-            border-radius: 8px;
-            padding: 6px 12px;
-        }
+        .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .topbar { height: 54px; background: #fff; border-bottom: 1px solid #e4e7ec; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; flex-shrink: 0; }
+        .topbar-left { display: flex; align-items: center; gap: 16px; }
+        .topbar-title { font-size: 15px; font-weight: 600; color: #0A0F1C; }
+        .search-box { display: flex; align-items: center; gap: 8px; background: #f0f2f5; border: 1px solid #e4e7ec; border-radius: 8px; padding: 6px 12px; }
         .search-box i { color: #aaa; font-size: 14px; }
-        .search-box input {
-            border: none;
-            background: transparent;
-            outline: none;
-            font-size: 13px;
-            color: #333;
-            width: 200px;
-        }
+        .search-box input { border: none; background: transparent; outline: none; font-size: 13px; color: #333; width: 200px; }
         .search-box input::placeholder { color: #aaa; }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .topbar-user {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            color: #555;
-        }
-        .avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #1E3A5F;
-            color: #7eb4f7;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 600;
-        }
-        .btn-logout {
-            padding: 6px 14px;
-            background: #ef4444;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
+        .topbar-right { display: flex; align-items: center; gap: 10px; }
+        .topbar-user { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #555; }
+        .avatar { width: 30px; height: 30px; border-radius: 50%; background: #1E3A5F; color: #7eb4f7; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+        .btn-logout { padding: 6px 14px; background: #ef4444; color: #fff; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
         .btn-logout:hover { background: #dc2626; }
-
-        /* ── Content ── */
-        .content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 24px;
-        }
-
-        /* ── Tab navigation ── */
-        .tab-nav {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 20px;
-            background: #fff;
-            border: 1px solid #e4e7ec;
-            border-radius: 10px;
-            padding: 6px;
-            width: fit-content;
-        }
-        .tab-btn {
-            padding: 8px 18px;
-            border: none;
-            border-radius: 7px;
-            background: transparent;
-            color: #666;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            transition: background 0.15s, color 0.15s;
-            white-space: nowrap;
-        }
+        .content { flex: 1; overflow-y: auto; padding: 24px; }
+        .tab-nav { display: flex; gap: 4px; margin-bottom: 20px; background: #fff; border: 1px solid #e4e7ec; border-radius: 10px; padding: 6px; width: fit-content; }
+        .tab-btn { padding: 8px 18px; border: none; border-radius: 7px; background: transparent; color: #666; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 7px; transition: background 0.15s, color 0.15s; white-space: nowrap; }
         .tab-btn:hover { background: #f0f2f5; color: #333; }
-        .tab-btn.active {
-            background: #0A0F1C;
-            color: #fff;
-        }
+        .tab-btn.active { background: #0A0F1C; color: #fff; }
         .tab-btn i { font-size: 15px; }
-
-        /* ── Panels ── */
         .tabela { display: none; }
         .tabela.active { display: block; }
-
-        .panel-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-        }
-        .page-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #0A0F1C;
-        }
-
-        /* ── Botões de ação ── */
-        .btn-add {
-            padding: 8px 16px;
-            background: #1E3A5F;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: background 0.15s;
-        }
+        .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .page-title { font-size: 18px; font-weight: 600; color: #0A0F1C; }
+        .btn-add { padding: 8px 16px; background: #1E3A5F; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s; }
         .btn-add:hover { background: #2a5080; }
-
-        .btn-refresh-icon {
-            width: 34px;
-            height: 34px;
-            border: 1px solid #e4e7ec;
-            background: #fff;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #555;
-            font-size: 16px;
-            transition: background 0.15s;
-            text-decoration: none;
-        }
+        .btn-refresh-icon { width: 34px; height: 34px; border: 1px solid #e4e7ec; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #555; font-size: 16px; transition: background 0.15s; text-decoration: none; }
         .btn-refresh-icon:hover { background: #f0f2f5; }
-
-        /* ── Tabela ── */
-        .tabela-wrap {
-            overflow-x: auto;
-            background: #fff;
-            border-radius: 12px;
-            border: 1px solid #e4e7ec;
-        }
-        .tabela-wrap table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            min-width: 600px;
-        }
-        .tabela-wrap thead {
-            background: #0A0F1C;
-            color: #fff;
-        }
-        .tabela-wrap thead th {
-            padding: 12px 14px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 12px;
-            letter-spacing: 0.03em;
-            white-space: nowrap;
-        }
-        .tabela-wrap tbody tr {
-            border-bottom: 1px solid #e4e7ec;
-            transition: background 0.1s;
-        }
+        .tabela-wrap { overflow-x: auto; background: #fff; border-radius: 12px; border: 1px solid #e4e7ec; }
+        .tabela-wrap table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 600px; }
+        .tabela-wrap thead { background: #0A0F1C; color: #fff; }
+        .tabela-wrap thead th { padding: 12px 14px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: 0.03em; white-space: nowrap; }
+        .tabela-wrap tbody tr { border-bottom: 1px solid #e4e7ec; transition: background 0.1s; }
         .tabela-wrap tbody tr:hover { background: #f7f9fc; }
-        .tabela-wrap tbody td {
-            padding: 11px 14px;
-            color: #333;
-            white-space: nowrap;
-        }
+        .tabela-wrap tbody td { padding: 11px 14px; color: #333; white-space: nowrap; }
         .tabela-wrap tbody tr:last-child { border-bottom: none; }
-
-        /* ── Status badges ── */
-        .status-activo   { color: #166534; font-weight: 600; }
+        .status-activo { color: #166534; font-weight: 600; }
         .status-bloqueado { color: #991b1b; font-weight: 600; }
         .status-pendente { background: #e0e7ff; color: #3730a3; font-size: 11px; padding: 3px 9px; border-radius: 10px; font-weight: 600; }
-        .status-detido   { background: #fee2e2; color: #991b1b; font-size: 11px; padding: 3px 9px; border-radius: 10px; font-weight: 600; }
-        .status-solto    { background: #dcfce7; color: #166534; font-size: 11px; padding: 3px 9px; border-radius: 10px; font-weight: 600; }
-
-        /* ── Botões de linha ── */
-        .btn-editar, .btn-bloquear, .btn-apagar {
-            padding: 5px 10px;
-            margin: 2px;
-            border: none;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity 0.15s;
-        }
-        .btn-editar   { background: #1E3A5F; color: #fff; }
+        .status-detido { background: #fee2e2; color: #991b1b; font-size: 11px; padding: 3px 9px; border-radius: 10px; font-weight: 600; }
+        .status-solto { background: #dcfce7; color: #166534; font-size: 11px; padding: 3px 9px; border-radius: 10px; font-weight: 600; }
+        .btn-editar, .btn-bloquear, .btn-apagar { padding: 5px 10px; margin: 2px; border: none; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+        .btn-editar { background: #1E3A5F; color: #fff; }
         .btn-bloquear { background: #f59e0b; color: #fff; }
-        .btn-apagar   { background: #ef4444; color: #fff; }
+        .btn-apagar { background: #ef4444; color: #fff; }
         .btn-editar:hover, .btn-bloquear:hover, .btn-apagar:hover { opacity: 0.85; }
-
-        .btn-mapa {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 10px;
-            background: #1E3A5F;
-            color: #fff;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: opacity 0.15s;
-        }
+        .btn-mapa { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #1E3A5F; color: #fff; border-radius: 6px; font-size: 11px; font-weight: 600; text-decoration: none; transition: opacity 0.15s; }
         .btn-mapa:hover { opacity: 0.85; }
-
-        /* ── Modal ── */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.55);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-        }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.55); z-index: 9999; align-items: center; justify-content: center; }
         .modal-overlay.open { display: flex; }
-        .modal-box {
-            background: #fff;
-            width: 90%;
-            max-width: 450px;
-            border-radius: 14px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            padding: 28px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #0A0F1C;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .modal-input {
-            width: 100%;
-            padding: 12px 14px;
-            margin: 7px 0;
-            border: 1.5px solid #e4e7ec;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-            transition: border 0.2s;
-            color: #333;
-        }
+        .modal-box { background: #fff; width: 90%; max-width: 450px; border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); padding: 28px; max-height: 90vh; overflow-y: auto; }
+        .modal-title { font-size: 18px; font-weight: 700; color: #0A0F1C; margin-bottom: 20px; text-align: center; }
+        .modal-input { width: 100%; padding: 12px 14px; margin: 7px 0; border: 1.5px solid #e4e7ec; border-radius: 8px; font-size: 14px; outline: none; transition: border 0.2s; color: #333; }
         .modal-input:focus { border-color: #1E3A5F; }
-        .modal-footer {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .btn-cancel {
-            flex: 1;
-            padding: 12px;
-            border: 1.5px solid #e4e7ec;
-            border-radius: 8px;
-            background: #fff;
-            color: #666;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
+        .modal-footer { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-cancel { flex: 1; padding: 12px; border: 1.5px solid #e4e7ec; border-radius: 8px; background: #fff; color: #666; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
         .btn-cancel:hover { background: #f0f2f5; }
-        .btn-confirm {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: #0A0F1C;
-            color: #fff;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
+        .btn-confirm { flex: 1; padding: 12px; border: none; border-radius: 8px; background: #0A0F1C; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
         .btn-confirm:hover { background: #1E3A5F; }
-
-        .empty-row td {
-            text-align: center;
-            padding: 28px;
-            color: #aaa;
-            font-size: 13px;
-        }
-
-        @media (max-width: 768px) {
-            .search-box { display: none; }
-            .tab-btn span { display: none; }
-        }
+        .empty-row td { text-align: center; padding: 28px; color: #aaa; font-size: 13px; }
+        @media (max-width: 768px) { .search-box { display: none; } .tab-btn span { display: none; } }
     </style>
 </head>
 <body>
 
-<!-- ── Sidebar ── -->
 <nav class="sidebar">
-    <div class="sidebar-logo">
-        <i class="bi bi-shield-fill"></i>
-    </div>
-
-    <a class="nav-item" href="sistema.html">
-        <i class="bi bi-house-fill"></i>
-        <span class="nav-label">Início</span>
-    </a>
-
-    <a class="nav-item active" href="#">
-        <i class="bi bi-database-fill"></i>
-        <span class="nav-label">Banco de dados</span>
-    </a>
-
+    <div class="sidebar-logo"><i class="bi bi-shield-fill"></i></div>
+    <a class="nav-item" href="sistema.html"><i class="bi bi-house-fill"></i><span class="nav-label">Início</span></a>
+    <a class="nav-item active" href="#"><i class="bi bi-database-fill"></i><span class="nav-label">Banco de dados</span></a>
     <div class="nav-spacer"></div>
-
-    <a class="nav-item" onclick="logout()">
-        <i class="bi bi-box-arrow-right"></i>
-        <span class="nav-label">Terminar sessão</span>
-    </a>
+    <a class="nav-item" onclick="logout()"><i class="bi bi-box-arrow-right"></i><span class="nav-label">Terminar sessão</span></a>
 </nav>
 
-<!-- ── Main ── -->
 <div class="main">
-
-    <!-- Topbar -->
     <div class="topbar">
         <div class="topbar-left">
             <span class="topbar-title">Sistema Biométrico — Polícia Nacional</span>
@@ -458,40 +108,21 @@
         </div>
     </div>
 
-    <!-- Content -->
     <div class="content">
-
-        <!-- Tab Nav -->
         <div class="tab-nav">
-            <button class="tab-btn active" onclick="mostrar('agentes', this)">
-                <i class="bi bi-person-badge-fill"></i>
-                <span>Agentes</span>
-            </button>
-            <button class="tab-btn" onclick="mostrar('crimes', this)">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-                <span>Crimes</span>
-            </button>
-            <button class="tab-btn" onclick="mostrar('nacionais', this)">
-                <i class="bi bi-people-fill"></i>
-                <span>Nacionais</span>
-            </button>
-            <button class="tab-btn" onclick="mostrar('ocorrencias', this)">
-                <i class="bi bi-geo-alt-fill"></i>
-                <span>Ocorrências</span>
-            </button>
+            <button class="tab-btn active" onclick="mostrar('agentes', this)"><i class="bi bi-person-badge-fill"></i><span>Agentes</span></button>
+            <button class="tab-btn" onclick="mostrar('crimes', this)"><i class="bi bi-exclamation-triangle-fill"></i><span>Crimes</span></button>
+            <button class="tab-btn" onclick="mostrar('nacionais', this)"><i class="bi bi-people-fill"></i><span>Nacionais</span></button>
+            <button class="tab-btn" onclick="mostrar('ocorrencias', this)"><i class="bi bi-geo-alt-fill"></i><span>Ocorrências</span></button>
         </div>
 
-        <!-- ── AGENTES ── -->
+        <!-- AGENTES — campo Tipo substituído por ID Bilhete -->
         <div id="agentes" class="tabela active">
             <div class="panel-header">
                 <div class="page-title">Agentes</div>
                 <div style="display:flex;gap:8px;align-items:center;">
-                    <a class="btn-refresh-icon" onclick="actualisar()" title="Actualizar">
-                        <i class="bi bi-arrow-clockwise"></i>
-                    </a>
-                    <button class="btn-add" onclick="adicionar()">
-                        <i class="bi bi-plus-lg"></i> Adicionar
-                    </button>
+                    <a class="btn-refresh-icon" onclick="actualisar()" title="Actualizar"><i class="bi bi-arrow-clockwise"></i></a>
+                    <button class="btn-add" onclick="adicionar()"><i class="bi bi-plus-lg"></i> Adicionar</button>
                 </div>
             </div>
             <div class="tabela-wrap">
@@ -499,7 +130,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>TIPO</th>
+                            <th>ID BILHETE</th>
                             <th>NOME</th>
                             <th>PATENTE</th>
                             <th>GÉNERO</th>
@@ -521,33 +152,21 @@
             </div>
         </div>
 
-        <!-- ── CRIMES ── -->
+        <!-- CRIMES -->
         <div id="crimes" class="tabela">
             <div class="panel-header">
                 <div class="page-title">Crimes</div>
                 <div style="display:flex;gap:8px;align-items:center;">
-                    <a class="btn-refresh-icon" onclick="actualizarCrimes()" title="Actualizar">
-                        <i class="bi bi-arrow-clockwise"></i>
-                    </a>
-                    <button class="btn-add" onclick="adicionarCrime()">
-                        <i class="bi bi-plus-lg"></i> Adicionar
-                    </button>
+                    <a class="btn-refresh-icon" onclick="actualizarCrimes()" title="Actualizar"><i class="bi bi-arrow-clockwise"></i></a>
+                    <button class="btn-add" onclick="adicionarCrime()"><i class="bi bi-plus-lg"></i> Adicionar</button>
                 </div>
             </div>
             <div class="tabela-wrap">
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>NOME</th>
-                            <th>GÉNERO</th>
-                            <th>DATA DETENÇÃO</th>
-                            <th>DATA SAÍDA</th>
-                            <th>PROVÍNCIA</th>
-                            <th>ALTURA</th>
-                            <th>STATUS</th>
-                            <th>FOTO</th>
-                            <th>AÇÕES</th>
+                            <th>ID</th><th>NOME</th><th>GÉNERO</th><th>DATA DETENÇÃO</th>
+                            <th>DATA SAÍDA</th><th>PROVÍNCIA</th><th>ALTURA</th><th>STATUS</th><th>FOTO</th><th>AÇÕES</th>
                         </tr>
                     </thead>
                     <tbody id="linhasCrimes">
@@ -557,44 +176,14 @@
             </div>
         </div>
 
-        <!-- ── NACIONAIS ── -->
+        <!-- NACIONAIS — com ID Bilhete -->
         <div id="nacionais" class="tabela">
             <div class="panel-header">
                 <div class="page-title">Nacionais</div>
-            </div>
-            <div class="tabela-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>NOME</th>
-                            <th>IDADE</th>
-                            <th>ALTURA</th>
-                            <th>DATA</th>
-                            <th>MORADA</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Maria</td>
-                            <td>22</td>
-                            <td>—</td>
-                            <td>—</td>
-                            <td>Luanda</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- ── OCORRÊNCIAS ── -->
-        <div id="ocorrencias" class="tabela">
-            <div class="panel-header">
-                <div class="page-title">Ocorrências</div>
-                <a class="btn-refresh-icon" onclick="actualizarOcorrencias()" title="Actualizar">
-                    <i class="bi bi-arrow-clockwise"></i>
-                </a>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <a class="btn-refresh-icon" onclick="actualizarNacionais()" title="Actualizar"><i class="bi bi-arrow-clockwise"></i></a>
+                    <button class="btn-add" onclick="adicionarNacional()"><i class="bi bi-plus-lg"></i> Adicionar</button>
+                </div>
             </div>
             <div class="tabela-wrap">
                 <table>
@@ -602,13 +191,33 @@
                         <tr>
                             <th>ID</th>
                             <th>ID BILHETE</th>
-                            <th>ID AGENTE</th>
-                            <th>GPS</th>
+                            <th>NOME</th>
+                            <th>IDADE</th>
+                            <th>ALTURA</th>
                             <th>DATA</th>
-                            <th>HORA</th>
-                            <th>VEZES</th>
-                            <th>STATUS</th>
-                            <th>AÇÃO</th>
+                            <th>MORADA</th>
+                            <th>AÇÕES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="linhasNacionais">
+                        <tr class="empty-row"><td colspan="8">A carregar...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- OCORRÊNCIAS -->
+        <div id="ocorrencias" class="tabela">
+            <div class="panel-header">
+                <div class="page-title">Ocorrências</div>
+                <a class="btn-refresh-icon" onclick="actualizarOcorrencias()" title="Actualizar"><i class="bi bi-arrow-clockwise"></i></a>
+            </div>
+            <div class="tabela-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>ID BILHETE</th><th>ID AGENTE</th><th>GPS</th>
+                            <th>DATA</th><th>HORA</th><th>VEZES</th><th>STATUS</th><th>AÇÃO</th>
                         </tr>
                     </thead>
                     <tbody id="linhasOcorrencias">
@@ -617,25 +226,18 @@
                 </table>
             </div>
         </div>
+    </div>
+</div>
 
-    </div><!-- /content -->
-</div><!-- /main -->
-
-
-<!-- ── MODAL AGENTES ── -->
+<!-- MODAL AGENTES -->
 <div id="modalAgentes" class="modal-overlay">
     <div class="modal-box">
         <div class="modal-title">Novo Agente</div>
-        <input id="inputID"        class="modal-input" placeholder="ID (ex: 001)">
-        <input id="inputNome"      class="modal-input" placeholder="Nome completo (mínimo 3 nomes)">
-        <select id="inputTipo"     class="modal-input">
-            <option value="">Selecionar tipo</option>
-            <option value="Policia">Policia</option>
-            <option value="Investigador">Investigador</option>
-            <option value="Agente">Agente</option>
-        </select>
-        <input id="inputPatente"   class="modal-input" placeholder="Patente (ex: Sargento)">
-        <select id="inputGenero"   class="modal-input">
+        <input id="inputID"         class="modal-input" placeholder="ID (ex: 001)">
+        <input id="inputIDBilhete"  class="modal-input" placeholder="ID Bilhete (ex: B123)">
+        <input id="inputNome"       class="modal-input" placeholder="Nome completo (mínimo 3 nomes)">
+        <input id="inputPatente"    class="modal-input" placeholder="Patente (ex: Sargento)">
+        <select id="inputGenero"    class="modal-input">
             <option value="">Selecionar género</option>
             <option value="Masculino">Masculino</option>
             <option value="Feminino">Feminino</option>
@@ -649,17 +251,17 @@
             <option>Uige</option><option>Kwanza Norte</option><option>Kwanza Sul</option>
             <option>Lunda Norte</option><option>Lunda Sul</option><option>Bengo</option>
         </select>
-        <input id="inputMunicipio" class="modal-input" placeholder="Município">
-        <input id="inputEsquadra"  class="modal-input" placeholder="Esquadra / Delegacia">
-        <select id="inputArma"     class="modal-input">
+        <input id="inputMunicipio"  class="modal-input" placeholder="Município">
+        <input id="inputEsquadra"   class="modal-input" placeholder="Esquadra / Delegacia">
+        <select id="inputArma"      class="modal-input">
             <option value="">Selecionar tipo de arma</option>
             <option>Pistola</option><option>Espingarda</option>
             <option>Submetralhadora</option><option>Rifle</option>
             <option>Arma Biometrica</option>
         </select>
-        <input id="inputDataE"     class="modal-input" type="date" placeholder="Data Emissão">
-        <input id="inputDataR"     class="modal-input" type="date" placeholder="Data Renovação">
-        <input id="inputFoto"      class="modal-input" type="file" accept="image/*">
+        <input id="inputDataE"      class="modal-input" type="date" placeholder="Data Emissão">
+        <input id="inputDataR"      class="modal-input" type="date" placeholder="Data Renovação">
+        <input id="inputFoto"       class="modal-input" type="file" accept="image/*">
         <div class="modal-footer">
             <button class="btn-cancel"  onclick="fecharModal()">Cancelar</button>
             <button class="btn-confirm" id="btnSalvar" onclick="salvarNovo()">Adicionar Agente</button>
@@ -667,18 +269,18 @@
     </div>
 </div>
 
-<!-- ── MODAL CRIMES ── -->
+<!-- MODAL CRIMES -->
 <div id="modalCrimes" class="modal-overlay">
     <div class="modal-box">
         <div class="modal-title">Novo Crime</div>
-        <input id="crimeID"        class="modal-input" placeholder="ID (ex: 001)">
-        <input id="crimeNome"      class="modal-input" placeholder="Nome completo (mínimo 3 nomes)">
-        <select id="crimeGenero"   class="modal-input">
+        <input id="crimeID"         class="modal-input" placeholder="ID (ex: 001)">
+        <input id="crimeNome"       class="modal-input" placeholder="Nome completo (mínimo 3 nomes)">
+        <select id="crimeGenero"    class="modal-input">
             <option value="">Selecionar género</option>
             <option>Masculino</option><option>Feminino</option>
         </select>
-        <input id="crimeDetencao"  class="modal-input" type="date">
-        <input id="crimeSaida"     class="modal-input" type="date">
+        <input id="crimeDetencao"   class="modal-input" type="date">
+        <input id="crimeSaida"      class="modal-input" type="date">
         <select id="crimeProvincia" class="modal-input">
             <option value="">Selecionar província</option>
             <option>Luanda</option><option>Benguela</option><option>Huila</option>
@@ -688,7 +290,7 @@
             <option>Uige</option><option>Kwanza Norte</option><option>Kwanza Sul</option>
             <option>Lunda Norte</option><option>Lunda Sul</option><option>Bengo</option>
         </select>
-        <select id="crimeAltura"   class="modal-input">
+        <select id="crimeAltura"    class="modal-input">
             <option value="">Selecionar altura</option>
             <option value="1.40">1.40 m</option><option value="1.45">1.45 m</option>
             <option value="1.50">1.50 m</option><option value="1.55">1.55 m</option>
@@ -698,12 +300,12 @@
             <option value="1.90">1.90 m</option><option value="1.95">1.95 m</option>
             <option value="2.00">2.00 m</option>
         </select>
-        <select id="crimeStatus"   class="modal-input">
+        <select id="crimeStatus"    class="modal-input">
             <option value="">Selecionar estado</option>
             <option value="Detido">DETIDO</option>
             <option value="Solto">SOLTO</option>
         </select>
-        <input id="crimeFoto"      class="modal-input" type="file" accept="image/*">
+        <input id="crimeFoto"       class="modal-input" type="file" accept="image/*">
         <div class="modal-footer">
             <button class="btn-cancel"  onclick="fecharModalCrime()">Cancelar</button>
             <button class="btn-confirm" id="btnSalvarCrime" onclick="salvarCrime()">Adicionar Crime</button>
@@ -711,27 +313,37 @@
     </div>
 </div>
 
+<!-- MODAL NACIONAIS -->
+<div id="modalNacionais" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-title">Novo Nacional</div>
+        <input id="nacionalID"        class="modal-input" placeholder="ID (ex: 001)">
+        <input id="nacionalIDBilhete" class="modal-input" placeholder="ID Bilhete (ex: B123)">
+        <input id="nacionalNome"      class="modal-input" placeholder="Nome completo (mínimo 3 nomes)">
+        <input id="nacionalIdade"     class="modal-input" type="number" placeholder="Idade">
+        <input id="nacionalAltura"    class="modal-input" placeholder="Altura (ex: 1.75)">
+        <input id="nacionalData"      class="modal-input" type="date" placeholder="Data de nascimento">
+        <input id="nacionalMorada"    class="modal-input" placeholder="Morada">
+        <div class="modal-footer">
+            <button class="btn-cancel"  onclick="fecharModalNacional()">Cancelar</button>
+            <button class="btn-confirm" id="btnSalvarNacional" onclick="salvarNacional()">Adicionar Nacional</button>
+        </div>
+    </div>
+</div>
 
 <script>
     const BASE_URL = "https://sistema-de-controle-biom-trico-c4tc.vercel.app";
     const HEADERS  = { "ngrok-skip-browser-warning": "true" };
-
     let isUpdating = false;
 
-    /* ── Auth ── */
     if (!sessionStorage.getItem('usuario')) {
         window.location.href = 'login.html';
     } else {
-        document.getElementById('nomeUtilizador').textContent =
-            sessionStorage.getItem('usuario').toUpperCase();
+        document.getElementById('nomeUtilizador').textContent = sessionStorage.getItem('usuario').toUpperCase();
     }
 
-    function logout() {
-        sessionStorage.clear();
-        window.location.href = 'login.html';
-    }
+    function logout() { sessionStorage.clear(); window.location.href = 'login.html'; }
 
-    /* ── Tabs ── */
     function mostrar(id, btn) {
         document.querySelectorAll('.tabela').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -739,7 +351,6 @@
         if (btn) btn.classList.add('active');
     }
 
-    /* ── Pesquisa ── */
     function pesquisar() {
         const termo = document.getElementById('search').value.toLowerCase();
         document.querySelectorAll('.tabela.active tbody tr').forEach(tr => {
@@ -747,7 +358,7 @@
         });
     }
 
-    /* ────────────── AGENTES ────────────── */
+    /* ── AGENTES ── */
     async function actualisar() {
         if (isUpdating) return;
         isUpdating = true;
@@ -755,22 +366,18 @@
             const res   = await fetch(BASE_URL + "/policia", { headers: HEADERS });
             if (!res.ok) throw new Error("Erro " + res.status);
             const dados = await res.json();
-
             let html = '';
             if (!dados.length) {
                 html = '<tr class="empty-row"><td colspan="14">Nenhum agente registado.</td></tr>';
             } else {
                 for (const p of dados) {
-                    const fotoHtml   = p.foto
-                        ? `<img src="${BASE_URL}/uploads/${p.foto}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">`
-                        : '<span style="color:#aaa;font-size:11px;">Sem foto</span>';
-                    const statusCls  = p.status === 'bloqueado' ? 'status-bloqueado' : 'status-activo';
-                    const statusTxt  = p.status === 'bloqueado' ? 'BLOQUEADO' : 'ACTIVO';
+                    const fotoHtml  = p.foto ? `<img src="${BASE_URL}/uploads/${p.foto}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">` : '<span style="color:#aaa;font-size:11px;">Sem foto</span>';
+                    const statusCls = p.status === 'bloqueado' ? 'status-bloqueado' : 'status-activo';
+                    const statusTxt = p.status === 'bloqueado' ? 'BLOQUEADO' : 'ACTIVO';
                     const btnBloqTxt = p.status === 'bloqueado' ? 'DESBLOQUEAR' : 'BLOQUEAR';
-                    html += `
-                    <tr>
+                    html += `<tr>
                         <td>${p.id ?? '—'}</td>
-                        <td>${p.tipo ?? '—'}</td>
+                        <td>${p.idBilhete ?? '—'}</td>
                         <td>${p.nome ?? '—'}</td>
                         <td>${p.patente ?? '—'}</td>
                         <td>${p.genero ?? '—'}</td>
@@ -792,35 +399,27 @@
             }
             document.getElementById("linhas").innerHTML = html;
         } catch (e) {
-            document.getElementById("linhas").innerHTML =
-                '<tr class="empty-row"><td colspan="14" style="color:#ef4444;">Erro de conexão. Verifique o servidor.</td></tr>';
+            document.getElementById("linhas").innerHTML = '<tr class="empty-row"><td colspan="14" style="color:#ef4444;">Erro de conexão.</td></tr>';
         } finally {
             setTimeout(() => isUpdating = false, 500);
         }
     }
 
-    function adicionar() {
-        document.getElementById('modalAgentes').classList.add('open');
-    }
-    function fecharModal() {
-        document.getElementById('modalAgentes').classList.remove('open');
-    }
+    function adicionar() { document.getElementById('modalAgentes').classList.add('open'); }
+    function fecharModal() { document.getElementById('modalAgentes').classList.remove('open'); }
 
     async function toggleStatus(id) {
         try {
-            const res  = await fetch(BASE_URL + "/policia/" + id + "/status", { method: "PATCH", headers: HEADERS });
-            if (res.ok) {
-                const data = await res.json();
-                alert("Agente " + data.status.toUpperCase() + "!");
-                setTimeout(actualisar, 300);
-            } else { alert("Erro ao alterar status"); }
+            const res = await fetch(BASE_URL + "/policia/" + id + "/status", { method: "PATCH", headers: HEADERS });
+            if (res.ok) { const data = await res.json(); alert("Agente " + data.status.toUpperCase() + "!"); setTimeout(actualisar, 300); }
+            else { alert("Erro ao alterar status"); }
         } catch { alert("Servidor offline!"); }
     }
 
     async function salvarNovo() {
         const id          = document.getElementById('inputID').value.trim();
+        const idBilhete   = document.getElementById('inputIDBilhete').value.trim();
         const nome        = document.getElementById('inputNome').value.trim();
-        const tipo        = document.getElementById('inputTipo').value;
         const patente     = document.getElementById('inputPatente').value.trim();
         const genero      = document.getElementById('inputGenero').value;
         const provincia   = document.getElementById('inputProvincia').value;
@@ -831,56 +430,45 @@
         const dataRenovacao = document.getElementById('inputDataR').value;
         const fotoInput   = document.getElementById('inputFoto');
 
-        if (!id)                                           { alert("ID vazio!"); return; }
-        if (nome.split(' ').filter(p=>p).length < 3)      { alert("Nome deve ter mínimo 3 nomes!"); return; }
-        if (!tipo)     { alert("TIPO não seleccionado!"); return; }
-        if (!patente)  { alert("PATENTE vazia!"); return; }
-        if (!genero)   { alert("GÉNERO não seleccionado!"); return; }
-        if (!provincia){ alert("PROVÍNCIA não seleccionada!"); return; }
-        if (!municipio){ alert("MUNICÍPIO vazio!"); return; }
-        if (!esquadra) { alert("ESQUADRA vazia!"); return; }
-        if (!arma)     { alert("ARMA não seleccionada!"); return; }
-        if (!dataEmissao)  { alert("DATA EMISSÃO não preenchida!"); return; }
-        if (!dataRenovacao){ alert("DATA RENOVAÇÃO não preenchida!"); return; }
+        if (!id)                                      { alert("ID vazio!"); return; }
+        if (nome.split(' ').filter(p=>p).length < 3)  { alert("Nome deve ter mínimo 3 nomes!"); return; }
+        if (!patente)   { alert("PATENTE vazia!"); return; }
+        if (!genero)    { alert("GÉNERO não seleccionado!"); return; }
+        if (!provincia) { alert("PROVÍNCIA não seleccionada!"); return; }
+        if (!municipio) { alert("MUNICÍPIO vazio!"); return; }
+        if (!esquadra)  { alert("ESQUADRA vazia!"); return; }
+        if (!arma)      { alert("ARMA não seleccionada!"); return; }
+        if (!dataEmissao)   { alert("DATA EMISSÃO não preenchida!"); return; }
+        if (!dataRenovacao) { alert("DATA RENOVAÇÃO não preenchida!"); return; }
 
         const btn = document.getElementById('btnSalvar');
-        btn.textContent = "A guardar...";
-        btn.disabled = true;
-
+        btn.textContent = "A guardar..."; btn.disabled = true;
         try {
             let nomeFoto = '';
             if (fotoInput.files[0]) {
                 const fd = new FormData();
                 fd.append('foto', fotoInput.files[0]);
-                const up   = await fetch(BASE_URL + "/upload", { method: "POST", body: fd, headers: { "ngrok-skip-browser-warning": "true" } });
-                const upData = await up.json();
-                nomeFoto = upData.ficheiro;
+                const up = await fetch(BASE_URL + "/upload", { method: "POST", body: fd, headers: { "ngrok-skip-browser-warning": "true" } });
+                nomeFoto = (await up.json()).ficheiro;
             }
             const res = await fetch(BASE_URL + "/policia", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-                body: JSON.stringify({ id, nome, tipo, patente, genero, provincia, municipio, esquadra, arma, dataEmissao, dataRenovacao, foto: nomeFoto })
+                body: JSON.stringify({ id, idBilhete, nome, patente, genero, provincia, municipio, esquadra, arma, dataEmissao, dataRenovacao, foto: nomeFoto })
             });
             if (res.ok) {
-                alert("Agente adicionado!");
-                fecharModal();
+                alert("Agente adicionado!"); fecharModal();
                 document.querySelectorAll('#modalAgentes input').forEach(i => i.value = '');
                 document.querySelectorAll('#modalAgentes select').forEach(s => s.value = '');
                 setTimeout(actualisar, 300);
-            } else {
-                const erro = await res.json();
-                alert("Erro: " + erro.erro);
-            }
+            } else { const erro = await res.json(); alert("Erro: " + erro.erro); }
         } catch { alert("Servidor offline!"); }
-
-        btn.textContent = "Adicionar Agente";
-        btn.disabled = false;
+        btn.textContent = "Adicionar Agente"; btn.disabled = false;
     }
 
     async function editar(id) {
         const nome        = prompt("Novo nome:");
         const patente     = prompt("Nova patente:");
-        const tipo        = prompt("Tipo:");
         const genero      = prompt("Género:");
         const provincia   = prompt("Província:");
         const municipio   = prompt("Município:");
@@ -888,15 +476,12 @@
         const arma        = prompt("Arma:");
         const dataEmissao = prompt("Data emissão (YYYY-MM-DD):");
         const dataRenovacao = prompt("Data renovação (YYYY-MM-DD):");
-
-        if (!nome||!patente||!tipo||!genero||!provincia||!municipio||!esquadra||!arma||!dataEmissao||!dataRenovacao) {
-            alert("Preencha TODOS os campos!"); return;
-        }
+        if (!nome||!patente||!genero||!provincia||!municipio||!esquadra||!arma||!dataEmissao||!dataRenovacao) { alert("Preencha TODOS os campos!"); return; }
         try {
             const res = await fetch(BASE_URL + "/policia/" + id, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-                body: JSON.stringify({ nome, patente, tipo, genero, provincia, municipio, esquadra, arma, dataEmissao, dataRenovacao })
+                body: JSON.stringify({ nome, patente, genero, provincia, municipio, esquadra, arma, dataEmissao, dataRenovacao })
             });
             if (res.ok) { setTimeout(actualisar, 300); alert("Actualizado!"); }
             else { alert("Erro ao actualizar"); }
@@ -912,38 +497,26 @@
         }
     }
 
-    /* ────────────── CRIMES ────────────── */
-    function adicionarCrime() {
-        document.getElementById('modalCrimes').classList.add('open');
-    }
-    function fecharModalCrime() {
-        document.getElementById('modalCrimes').classList.remove('open');
-    }
+    /* ── CRIMES ── */
+    function adicionarCrime() { document.getElementById('modalCrimes').classList.add('open'); }
+    function fecharModalCrime() { document.getElementById('modalCrimes').classList.remove('open'); }
 
     async function actualizarCrimes() {
         try {
             const res   = await fetch(BASE_URL + "/crimes", { headers: HEADERS });
             if (!res.ok) throw new Error("Erro " + res.status);
             const dados = await res.json();
-
             let html = '';
             if (!dados.length) {
                 html = '<tr class="empty-row"><td colspan="10">Nenhum crime registado.</td></tr>';
             } else {
                 for (const c of dados) {
-                    const fotoHtml = c.foto
-                        ? `<img src="${BASE_URL}/uploads/${c.foto}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">`
-                        : '<span style="color:#aaa;font-size:11px;">Sem foto</span>';
+                    const fotoHtml = c.foto ? `<img src="${BASE_URL}/uploads/${c.foto}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">` : '<span style="color:#aaa;font-size:11px;">Sem foto</span>';
                     const stCls = c.status === 'Detido' ? 'status-detido' : 'status-solto';
-                    html += `
-                    <tr>
-                        <td>${c.id ?? '—'}</td>
-                        <td>${c.nome ?? '—'}</td>
-                        <td>${c.genero ?? '—'}</td>
-                        <td>${c.dataDetencao ?? '—'}</td>
-                        <td>${c.dataSaida ?? '—'}</td>
-                        <td>${c.provincia ?? '—'}</td>
-                        <td>${c.altura ?? '—'}</td>
+                    html += `<tr>
+                        <td>${c.id ?? '—'}</td><td>${c.nome ?? '—'}</td><td>${c.genero ?? '—'}</td>
+                        <td>${c.dataDetencao ?? '—'}</td><td>${c.dataSaida ?? '—'}</td>
+                        <td>${c.provincia ?? '—'}</td><td>${c.altura ?? '—'}</td>
                         <td><span class="${stCls}">${c.status ?? '—'}</span></td>
                         <td>${fotoHtml}</td>
                         <td style="white-space:nowrap;">
@@ -955,35 +528,32 @@
             }
             document.getElementById("linhasCrimes").innerHTML = html;
         } catch (e) {
-            document.getElementById("linhasCrimes").innerHTML =
-                '<tr class="empty-row"><td colspan="10" style="color:#ef4444;">Erro de conexão. Verifique o servidor.</td></tr>';
+            document.getElementById("linhasCrimes").innerHTML = '<tr class="empty-row"><td colspan="10" style="color:#ef4444;">Erro de conexão.</td></tr>';
         }
     }
 
     async function salvarCrime() {
-        const id          = document.getElementById('crimeID').value.trim();
-        const nome        = document.getElementById('crimeNome').value.trim();
-        const genero      = document.getElementById('crimeGenero').value;
+        const id = document.getElementById('crimeID').value.trim();
+        const nome = document.getElementById('crimeNome').value.trim();
+        const genero = document.getElementById('crimeGenero').value;
         const dataDetencao = document.getElementById('crimeDetencao').value;
-        const dataSaida   = document.getElementById('crimeSaida').value;
-        const provincia   = document.getElementById('crimeProvincia').value;
-        const altura      = document.getElementById('crimeAltura').value;
-        const status      = document.getElementById('crimeStatus').value;
-        const fotoInput   = document.getElementById('crimeFoto');
+        const dataSaida = document.getElementById('crimeSaida').value;
+        const provincia = document.getElementById('crimeProvincia').value;
+        const altura = document.getElementById('crimeAltura').value;
+        const status = document.getElementById('crimeStatus').value;
+        const fotoInput = document.getElementById('crimeFoto');
 
-        if (!id)                                           { alert("ID vazio!"); return; }
-        if (nome.split(' ').filter(p=>p).length < 3)      { alert("Nome deve ter mínimo 3 nomes!"); return; }
-        if (!genero)      { alert("GÉNERO não seleccionado!"); return; }
-        if (!dataDetencao){ alert("DATA DETENÇÃO não preenchida!"); return; }
-        if (!dataSaida)   { alert("DATA SAÍDA não preenchida!"); return; }
-        if (!provincia)   { alert("PROVÍNCIA não seleccionada!"); return; }
-        if (!altura)      { alert("ALTURA não seleccionada!"); return; }
-        if (!status)      { alert("STATUS não seleccionado!"); return; }
+        if (!id) { alert("ID vazio!"); return; }
+        if (nome.split(' ').filter(p=>p).length < 3) { alert("Nome deve ter mínimo 3 nomes!"); return; }
+        if (!genero) { alert("GÉNERO não seleccionado!"); return; }
+        if (!dataDetencao) { alert("DATA DETENÇÃO não preenchida!"); return; }
+        if (!dataSaida) { alert("DATA SAÍDA não preenchida!"); return; }
+        if (!provincia) { alert("PROVÍNCIA não seleccionada!"); return; }
+        if (!altura) { alert("ALTURA não seleccionada!"); return; }
+        if (!status) { alert("STATUS não seleccionado!"); return; }
 
         const btn = document.getElementById('btnSalvarCrime');
-        btn.textContent = "A guardar...";
-        btn.disabled = true;
-
+        btn.textContent = "A guardar..."; btn.disabled = true;
         try {
             let nomeFoto = '';
             if (fotoInput.files[0]) {
@@ -998,33 +568,24 @@
                 body: JSON.stringify({ id, nome, genero, dataDetencao, dataSaida, provincia, altura, status, foto: nomeFoto })
             });
             if (res.ok) {
-                alert("Crime adicionado!");
-                fecharModalCrime();
+                alert("Crime adicionado!"); fecharModalCrime();
                 document.querySelectorAll('#modalCrimes input').forEach(i => i.value = '');
                 document.querySelectorAll('#modalCrimes select').forEach(s => s.value = '');
                 setTimeout(actualizarCrimes, 300);
-            } else {
-                const erro = await res.json();
-                alert("Erro: " + erro.erro);
-            }
+            } else { const erro = await res.json(); alert("Erro: " + erro.erro); }
         } catch { alert("Servidor offline!"); }
-
-        btn.textContent = "Adicionar Crime";
-        btn.disabled = false;
+        btn.textContent = "Adicionar Crime"; btn.disabled = false;
     }
 
     async function editarCrime(id) {
-        const nome        = prompt("Novo nome:");
-        const genero      = prompt("Género:");
+        const nome = prompt("Novo nome:");
+        const genero = prompt("Género:");
         const dataDetencao = prompt("Data detenção (YYYY-MM-DD):");
-        const dataSaida   = prompt("Data saída (YYYY-MM-DD):");
-        const provincia   = prompt("Província:");
-        const altura      = prompt("Altura:");
-        const status      = prompt("Status (Detido/Solto):");
-
-        if (!nome||!genero||!dataDetencao||!dataSaida||!provincia||!altura||!status) {
-            alert("Preencha TODOS os campos!"); return;
-        }
+        const dataSaida = prompt("Data saída (YYYY-MM-DD):");
+        const provincia = prompt("Província:");
+        const altura = prompt("Altura:");
+        const status = prompt("Status (Detido/Solto):");
+        if (!nome||!genero||!dataDetencao||!dataSaida||!provincia||!altura||!status) { alert("Preencha TODOS os campos!"); return; }
         try {
             const res = await fetch(BASE_URL + "/crimes/" + id, {
                 method: "PUT",
@@ -1045,44 +606,104 @@
         }
     }
 
-    /* ────────────── OCORRÊNCIAS ────────────── */
+    /* ── NACIONAIS ── */
+    function adicionarNacional() { document.getElementById('modalNacionais').classList.add('open'); }
+    function fecharModalNacional() { document.getElementById('modalNacionais').classList.remove('open'); }
+
+    async function actualizarNacionais() {
+        try {
+            const res   = await fetch(BASE_URL + "/nacionais", { headers: HEADERS });
+            if (!res.ok) throw new Error("Erro " + res.status);
+            const dados = await res.json();
+            let html = '';
+            if (!dados.length) {
+                html = '<tr class="empty-row"><td colspan="8">Nenhum nacional registado.</td></tr>';
+            } else {
+                for (const n of dados) {
+                    html += `<tr>
+                        <td>${n.id ?? '—'}</td>
+                        <td>${n.idBilhete ?? '—'}</td>
+                        <td>${n.nome ?? '—'}</td>
+                        <td>${n.idade ?? '—'}</td>
+                        <td>${n.altura ?? '—'}</td>
+                        <td>${n.data ?? '—'}</td>
+                        <td>${n.morada ?? '—'}</td>
+                        <td><button class="btn-apagar" onclick="deletarNacional('${n._id}')">apagar</button></td>
+                    </tr>`;
+                }
+            }
+            document.getElementById("linhasNacionais").innerHTML = html;
+        } catch (e) {
+            document.getElementById("linhasNacionais").innerHTML = '<tr class="empty-row"><td colspan="8" style="color:#ef4444;">Erro de conexão.</td></tr>';
+        }
+    }
+
+    async function salvarNacional() {
+        const id        = document.getElementById('nacionalID').value.trim();
+        const idBilhete = document.getElementById('nacionalIDBilhete').value.trim();
+        const nome      = document.getElementById('nacionalNome').value.trim();
+        const idade     = document.getElementById('nacionalIdade').value.trim();
+        const altura    = document.getElementById('nacionalAltura').value.trim();
+        const data      = document.getElementById('nacionalData').value;
+        const morada    = document.getElementById('nacionalMorada').value.trim();
+
+        if (!id)   { alert("ID vazio!"); return; }
+        if (!nome) { alert("Nome vazio!"); return; }
+
+        const btn = document.getElementById('btnSalvarNacional');
+        btn.textContent = "A guardar..."; btn.disabled = true;
+        try {
+            const res = await fetch(BASE_URL + "/nacionais", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+                body: JSON.stringify({ id, idBilhete, nome, idade, altura, data, morada })
+            });
+            if (res.ok) {
+                alert("Nacional adicionado!"); fecharModalNacional();
+                document.querySelectorAll('#modalNacionais input').forEach(i => i.value = '');
+                setTimeout(actualizarNacionais, 300);
+            } else { const erro = await res.json(); alert("Erro: " + erro.erro); }
+        } catch { alert("Servidor offline!"); }
+        btn.textContent = "Adicionar Nacional"; btn.disabled = false;
+    }
+
+    async function deletarNacional(id) {
+        if (confirm("Confirmar exclusão do nacional?")) {
+            try {
+                const res = await fetch(BASE_URL + "/nacionais/" + id, { method: "DELETE", headers: HEADERS });
+                if (res.ok) { setTimeout(actualizarNacionais, 300); alert("Excluído!"); }
+            } catch { alert("Erro ao excluir"); }
+        }
+    }
+
+    /* ── OCORRÊNCIAS ── */
     async function actualizarOcorrencias() {
         try {
             const res   = await fetch(BASE_URL + "/ocorrencias", { headers: HEADERS });
             if (!res.ok) throw new Error("Erro " + res.status);
             const dados = await res.json();
-
             let html = '';
             if (!dados.length) {
                 html = '<tr class="empty-row"><td colspan="9">Nenhuma ocorrência registada.</td></tr>';
             } else {
                 for (const o of dados) {
                     const mapaLink = `https://www.google.com/maps?q=${o.latitude},${o.longitude}`;
-                    html += `
-                    <tr>
+                    html += `<tr>
                         <td>${o.id ?? '—'}</td>
                         <td>${o.idBilhete ?? '—'}</td>
                         <td>${o.idAgente ?? '—'}</td>
-                        <td>
-                            ${o.latitude}, ${o.longitude}
-                            <a href="${mapaLink}" target="_blank" class="btn-mapa">
-                                <i class="bi bi-geo-alt-fill"></i> VER MAPA
-                            </a>
-                        </td>
+                        <td>${o.latitude}, ${o.longitude} <a href="${mapaLink}" target="_blank" class="btn-mapa"><i class="bi bi-geo-alt-fill"></i> VER MAPA</a></td>
                         <td>${o.data ?? '—'}</td>
                         <td>${o.hora ?? '—'}</td>
                         <td>${o.vezes ?? '—'}</td>
                         <td><span class="status-pendente">${o.status ?? '—'}</span></td>
-                        <td>
-                            <button class="btn-apagar" onclick="deletarOcorrencia('${o._id}')">apagar</button>
-                        </td>
+                        <td><button class="btn-apagar" onclick="deletarOcorrencia('${o._id}')">apagar</button></td>
                     </tr>`;
                 }
             }
             document.getElementById("linhasOcorrencias").innerHTML = html;
         } catch {
-            document.getElementById("linhasOcorrencias").innerHTML =
-                '<tr class="empty-row"><td colspan="9" style="color:#ef4444;">Erro de conexão. Verifique o servidor.</td></tr>';
+            document.getElementById("linhasOcorrencias").innerHTML = '<tr class="empty-row"><td colspan="9" style="color:#ef4444;">Erro de conexão.</td></tr>';
         }
     }
 
@@ -1095,10 +716,10 @@
         }
     }
 
-    /* ── Inicialização ── */
     window.onload = () => {
         actualisar();
         actualizarCrimes();
+        actualizarNacionais();
         actualizarOcorrencias();
         setInterval(actualizarOcorrencias, 10000);
     };
